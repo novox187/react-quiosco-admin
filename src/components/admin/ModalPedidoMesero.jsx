@@ -1,4 +1,3 @@
-import ResumenProducto from "../ResumenProducto";
 import useGeneralContext from "../../hooks/useGeneralContext";
 import { formatearDinero } from "../../helpers";
 import useAdmin from "../../hooks/useAdmin";

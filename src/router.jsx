@@ -8,7 +8,6 @@ import Categorias from './views/Categorias'
 import Registro from './views/Registro'
 import Despacho from './views/Despacho'
 import Errores from './views/Errores'
-import { QuioscoProvider } from './context/QuioscoProvider'
 import { AdminProvider } from './context/AdminProvider'
 import Dashboard from './views/admin/Dashboard'
 import ResivosPedidos from './views/admin/ResivosPedidos'
@@ -62,7 +61,7 @@ const router = createBrowserRouter([
     },
     {
         path: '/',
-        element: <QuioscoProvider><AuthLayout /></QuioscoProvider>,
+        element: <AuthLayout />,
         children: [
             {
                 index:true,
