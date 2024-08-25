@@ -18,7 +18,7 @@ export default function AuthLayout() {
         <Outlet />
         <nav className="mt-5">
           {location.pathname === registroUrl ? (
-            <Link to="/auth/login">
+            <Link to="/">
               <p className='text-segundo'>¿Ya tienes una cuenta? Inicia Sesion</p>
             </Link>
           ) : (

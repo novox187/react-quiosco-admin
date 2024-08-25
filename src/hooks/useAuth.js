@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import clienteAxios from "../config/axios";
 import { toast } from "react-toastify";
 import useGeneralContext from "./useGeneralContext";
+import { data } from "autoprefixer";
 
 export const useAuth = ({ middleware, url }) => {
   const token = localStorage.getItem("AUTH_TOKEN");
@@ -14,7 +15,7 @@ export const useAuth = ({ middleware, url }) => {
     useGeneralContext();
 
   const fetcher = async () => {
-    const response = await clienteAxios("/api/user", {
+    const response = await clienteAxios("/api/employees/session", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -22,13 +23,13 @@ export const useAuth = ({ middleware, url }) => {
     return response.data;
   };
 
-
-  const { data: user, error, mutate } = useSWR("/api/user", fetcher);
+  const { data: user, error, mutate } = useSWR("/api/employees/session", fetcher);
+  
   const login = async (datos, setErrores) => {
     setErrores([]);
-    setLoadingLogin(true)
+    setLoadingLogin(true);
     try {
-      const { data } = await clienteAxios.post("/api/login", datos);
+      const { data } = await clienteAxios.post("/api/employee/login", datos);
       localStorage.setItem("AUTH_TOKEN", data.token);
       localStorage.setItem("USER", datos.email);
       setErrores([]);
@@ -38,30 +39,32 @@ export const useAuth = ({ middleware, url }) => {
       setUserActual(data.user);
       await mutate();
       setUserActivo(true);
-      setLoadingLogin(false)
+      setLoadingLogin(false);
+      console.log(data)
     } catch (error) {
+      console.error(error);
       setErrores(Object.values(error.response.data.errors));
-      setLoadingLogin(false)
+      setLoadingLogin(false);
     }
   };
 
   const registro = async (datos, setErrores) => {
     setErrores([]);
-    setLoadingRegistro(true)
+    setLoadingRegistro(true);
     try {
-      const { data } = await clienteAxios.post("/api/registro", datos);
+      const { data } = await clienteAxios.post("/api/employee/register", datos);
       localStorage.setItem("AUTH_TOKEN", data.token);
       setErrores([]);
-      toast.success(`Bienvenido ${data?.user?.name}`);
-      setUserActual(data.user);
+      toast.success(`Bienvenido ${data?.employee?.first_name} ${data?.employee?.last_name}`);
+      setUserActual(data.employee);
       await mutate();
       localStorage.setItem("USER", datos.email);
       setModalAuth(!modalAuth);
       setUserActivo(true);
-      setLoadingRegistro(false)
+      setLoadingRegistro(false);
     } catch (error) {
       setErrores(Object.values(error.response.data.errors));
-      setLoadingRegistro(false)
+      setLoadingRegistro(false);
     }
   };
 
@@ -79,12 +82,12 @@ export const useAuth = ({ middleware, url }) => {
       localStorage.removeItem("AUTH_TOKEN");
       localStorage.removeItem("USER");
     } catch (error) {
-      console.log('algo salio mal')
+      console.log("algo salio mal");
     }
   };
 
   useEffect(() => {
-    if (middleware === "auth" && user && user?.rol == 'admin') {
+        if (middleware === "auth" && user && user?.rol == 'admin') {
       navigate('/admin');
     }
     if (middleware === "auth" && user && user?.rol == 'mesero') {
@@ -104,7 +107,7 @@ export const useAuth = ({ middleware, url }) => {
       setUserActivo(false);
     }
 
-    if (middleware === "administracion" && error) {
+        if (middleware === "administracion" && error) {
       navigate("/");
     }
     if (middleware === "panel" && user && user?.rol !== 'admin') {
@@ -129,6 +132,5 @@ export const useAuth = ({ middleware, url }) => {
     error,
     loadingLogin,
     loadingRegistro,
-
   };
 };

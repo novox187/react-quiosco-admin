@@ -248,7 +248,6 @@ export default function Despacho() {
                                     Cliente: {''}
                                     <div className=' flex space-x-1'>
                                         <span className='font-normal text-white'>{pedido.user.name}</span>
-                                        <Chip size='sm' color='warning' variant='flat' className={`${pedido.user.rol.length === 0 ? ' hidden' : ''}`}>{pedido.user.rol}</Chip>
                                     </div>
                                     <span className="flex">
                                         {generarEstrellas(pedido.user.calificacion)}

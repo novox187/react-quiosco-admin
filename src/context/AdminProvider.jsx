@@ -406,27 +406,6 @@ const AdminProvider = ({ children }) => {
         setModalEliminarCategoria(!modalEliminarCategoria)
     }
 
-    //Optener pedidos 
-    const obtenerPedidos = async () => {
-        const token = localStorage.getItem("AUTH_TOKEN");
-        try {
-            const { data } = await clienteAxios(`/api/pedidos/${Usuario}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data'
-                },
-            });
-            setPedidosQuery(data);
-        } catch (error) {
-            console.error(error)
-            console.error('inicia session')
-        }
-    };
-    useEffect(() => {
-        obtenerPedidos();
-    }, []);
-
-
     /* Eliminar Orden */
     const handleSubmitCalificacion = async (datosCalificacion) => {
         setErrorCalificacion([])
@@ -866,6 +845,7 @@ const AdminProvider = ({ children }) => {
         <AdminContext.Provider
             value={{
                 pedidosQuery,
+                setPedidosQuery,
                 modalEliminarOrden,
                 setModalEliminarOrden,
                 errorCalificacion,
@@ -983,7 +963,8 @@ const AdminProvider = ({ children }) => {
                 socketConnection,
                 setRegistros,
                 registros,
-                logoUrl
+                logoUrl,
+                token
             }}
         >
             {children}

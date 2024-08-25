@@ -23,7 +23,7 @@ export default function AdminSidebar() {
                     </div>
                 </div>
 
-                {user?.rol === 'admin' && (
+                {user && (
                     <nav className='flex flex-row justify-around text-mini overflow-auto lg:flex-col  lg:border-none min-w-60  lg:text-lg pr-4 py-3'>
                         <Link to="/admin" className={`font-bold uppercase ${location.pathname === '/admin' ? 'bg-zinc-800' : ''}  p-3 lg:p-4 rounded-xl lg:rounded-l-xl`}>Panel</Link>
                         <Link to="/admin/cocinero" className={`font-bold uppercase ${location.pathname === '/admin/cocinero' ? 'bg-zinc-800' : ''}  p-3 lg:p-4 rounded-xl lg:rounded-l-xl`}>Chef</Link>

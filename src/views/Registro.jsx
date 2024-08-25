@@ -6,8 +6,16 @@ import { Input } from '@nextui-org/react';
 
 export default function Registro() {
 
-    const nameRef = createRef();
+    const firstNameRef = createRef();
+    const lastNameRef = createRef();
     const emailRef = createRef();
+    const phoneRef = createRef();
+    const salaryRef = createRef();
+    const positionRef = createRef();
+    const departmentRef = createRef();
+    const addressRef = createRef();
+    const hireDateRef = createRef();
+    const usernameRef = createRef();
     const passwordRef = createRef();
     const passwordConfirmationRef = createRef();
 
@@ -18,8 +26,16 @@ export default function Registro() {
         e.preventDefault();
 
         const datos = {
-            name: nameRef.current.value,
+            first_name: firstNameRef.current.value,
+            last_name: lastNameRef.current.value,
             email: emailRef.current.value,
+            phone: phoneRef.current.value,
+            salary: salaryRef.current.value,
+            position: positionRef.current.value,
+            department: departmentRef.current.value,
+            address: addressRef.current.value,
+            hire_date: hireDateRef.current.value,
+            username: usernameRef.current.value,
             password: passwordRef.current.value,
             password_confirmation: passwordConfirmationRef.current.value
         }
@@ -44,17 +60,46 @@ export default function Registro() {
                     <div className="mb-4">
                         <Input
                             type="text"
-                            id="name"
-                            name="name"
+                            id="first_name"
+                            name="first_name"
                             label="Nombre"
-                            placeholder="Juen Perez"
-                            ref={nameRef}
+                            placeholder="Juan"
+                            ref={firstNameRef}
+                            classNames={{
+                                label: " dark:text-green",
+                                input: [
+                                  "bg-transparent",
+                                  "text-segundo",
+                                  "placeholder:text-segundo/50 dark:placeholder:text-segundo",
+                                ],
+                                innerWrapper: "",
+                                inputWrapper: [
+                                  "shadow-md shadow-cuarto",
+                                  "border-2 border-cuarto",
+                                  "text-segundo",
+                                  "bg-tercero",
+                                  "backdrop-blur-xl",
+                                  "group-data-[focus=true]:bg-tercero",
+                                  "!cursor-text",
+                                ],
+                              }}
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <Input
+                            type="text"
+                            id="last_name"
+                            name="last_name"
+                            label="Apellido"
+                            placeholder="Pérez"
+                            ref={lastNameRef}
                             classNames={{
                                 label: " text-segundo",
                                 input: [
                                   "bg-transparent",
                                   "text-segundo",
-                                  "placeholder:text-segundo/50 dark:placeholder:text-white/60",
+                                  "placeholder:text-segundo/50 dark:placeholder:text-segundo",
                                 ],
                                 innerWrapper: "",
                                 inputWrapper: [
@@ -84,7 +129,217 @@ export default function Registro() {
                                 input: [
                                   "bg-transparent",
                                   "text-segundo",
-                                  "placeholder:text-segundo/50 dark:placeholder:text-white/60",
+                                  "placeholder:text-segundo/50 dark:placeholder:text-segundo",
+                                ],
+                                innerWrapper: "",
+                                inputWrapper: [
+                                  "shadow-md shadow-cuarto",
+                                  "border-2 border-cuarto",
+                                  "text-segundo",
+                                  "bg-tercero",
+                                  "backdrop-blur-xl",
+                                  "backdrop-saturate-200",
+                                  "group-data-[focus=true]:bg-tercero",
+                                  "!cursor-text",
+                                ],
+                              }}
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <Input
+                            type="text"
+                            id="phone"
+                            name="phone"
+                            label="Teléfono"
+                            placeholder="123-456-7890"
+                            ref={phoneRef}
+                            classNames={{
+                                label: " text-segundo",
+                                input: [
+                                  "bg-transparent",
+                                  "text-segundo",
+                                  "placeholder:text-segundo/50 dark:placeholder:text-segundo",
+                                ],
+                                innerWrapper: "",
+                                inputWrapper: [
+                                  "shadow-md shadow-cuarto",
+                                  "border-2 border-cuarto",
+                                  "text-segundo",
+                                  "bg-tercero",
+                                  "backdrop-blur-xl",
+                                  "backdrop-saturate-200",
+                                  "group-data-[focus=true]:bg-tercero",
+                                  "!cursor-text",
+                                ],
+                              }}
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <Input
+                            type="text"
+                            id="salary"
+                            name="salary"
+                            label="Salario"
+                            placeholder="1000"
+                            ref={salaryRef}
+                            classNames={{
+                                label: " text-segundo",
+                                input: [
+                                  "bg-transparent",
+                                  "text-segundo",
+                                  "placeholder:text-segundo/50 dark:placeholder:text-segundo",
+                                ],
+                                innerWrapper: "",
+                                inputWrapper: [
+                                  "shadow-md shadow-cuarto",
+                                  "border-2 border-cuarto",
+                                  "text-segundo",
+                                  "bg-tercero",
+                                  "backdrop-blur-xl",
+                                  "backdrop-saturate-200",
+                                  "group-data-[focus=true]:bg-tercero",
+                                  "!cursor-text",
+                                ],
+                              }}
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <Input
+                            type="text"
+                            id="position"
+                            name="position"
+                            label="Puesto"
+                            placeholder="Desarrollador"
+                            ref={positionRef}
+                            classNames={{
+                                label: " text-segundo",
+                                input: [
+                                  "bg-transparent",
+                                  "text-segundo",
+                                  "placeholder:text-segundo/50 dark:placeholder:text-segundo",
+                                ],
+                                innerWrapper: "",
+                                inputWrapper: [
+                                  "shadow-md shadow-cuarto",
+                                  "border-2 border-cuarto",
+                                  "text-segundo",
+                                  "bg-tercero",
+                                  "backdrop-blur-xl",
+                                  "backdrop-saturate-200",
+                                  "group-data-[focus=true]:bg-tercero",
+                                  "!cursor-text",
+                                ],
+                              }}
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <Input
+                            type="text"
+                            id="department"
+                            name="department"
+                            label="Departamento"
+                            placeholder="Tecnología"
+                            ref={departmentRef}
+                            classNames={{
+                                label: " text-segundo",
+                                input: [
+                                  "bg-transparent",
+                                  "text-segundo",
+                                  "placeholder:text-segundo/50 dark:placeholder:text-segundo",
+                                ],
+                                innerWrapper: "",
+                                inputWrapper: [
+                                  "shadow-md shadow-cuarto",
+                                  "border-2 border-cuarto",
+                                  "text-segundo",
+                                  "bg-tercero",
+                                  "backdrop-blur-xl",
+                                  "backdrop-saturate-200",
+                                  "group-data-[focus=true]:bg-tercero",
+                                  "!cursor-text",
+                                ],
+                              }}
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <Input
+                            type="text"
+                            id="address"
+                            name="address"
+                            label="Dirección"
+                            placeholder="Calle 123"
+                            ref={addressRef}
+                            classNames={{
+                                label: " text-segundo",
+                                input: [
+                                  "bg-transparent",
+                                  "text-segundo",
+                                  "placeholder:text-segundo/50 dark:placeholder:text-segundo",
+                                ],
+                                innerWrapper: "",
+                                inputWrapper: [
+                                  "shadow-md shadow-cuarto",
+                                  "border-2 border-cuarto",
+                                  "text-segundo",
+                                  "bg-tercero",
+                                  "backdrop-blur-xl",
+                                  "backdrop-saturate-200",
+                                  "group-data-[focus=true]:bg-tercero",
+                                  "!cursor-text",
+                                ],
+                              }}
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <Input
+                            type="date"
+                            id="hire_date"
+                            name="hire_date"
+                            label="Fecha de Contratación"
+                            placeholder="2023-01-01"
+                            ref={hireDateRef}
+                            classNames={{
+                                label: " text-segundo",
+                                input: [
+                                  "bg-transparent",
+                                  "text-segundo",
+                                  "placeholder:text-segundo/50 dark:placeholder:text-segundo",
+                                ],
+                                innerWrapper: "",
+                                inputWrapper: [
+                                  "shadow-md shadow-cuarto",
+                                  "border-2 border-cuarto",
+                                  "text-segundo",
+                                  "bg-tercero",
+                                  "backdrop-blur-xl",
+                                  "backdrop-saturate-200",
+                                  "group-data-[focus=true]:bg-tercero",
+                                  "!cursor-text",
+                                ],
+                              }}
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <Input
+                            type="text"
+                            id="username"
+                            name="username"
+                            label="Nombre de Usuario"
+                            placeholder="juanperez"
+                            ref={usernameRef}
+                            classNames={{
+                                label: " text-segundo",
+                                input: [
+                                  "bg-transparent",
+                                  "text-segundo",
+                                  "placeholder:text-segundo/50 dark:placeholder:text-segundo",
                                 ],
                                 innerWrapper: "",
                                 inputWrapper: [
@@ -114,7 +369,7 @@ export default function Registro() {
                                 input: [
                                   "bg-transparent",
                                   "text-segundo",
-                                  "placeholder:text-segundo/50 dark:placeholder:text-white/60",
+                                  "placeholder:text-segundo/50 dark:placeholder:text-segundo",
                                 ],
                                 innerWrapper: "",
                                 inputWrapper: [
@@ -136,15 +391,16 @@ export default function Registro() {
                             type="password"
                             id="password_confirmation"
                             name="password_confirmation"
-                            label="Contraseña"
+                            label="Confirmar Contraseña"
                             placeholder="Repite la contraseña"
+                            className='text-segundo'
                             ref={passwordConfirmationRef}
                             classNames={{
                                 label: " text-segundo",
                                 input: [
                                   "bg-transparent",
                                   "text-segundo",
-                                  "placeholder:text-segundo/50 dark:placeholder:text-white/60",
+                                  "placeholder:text-segundo/50 dark:placeholder:text-segundo",
                                 ],
                                 innerWrapper: "",
                                 inputWrapper: [
