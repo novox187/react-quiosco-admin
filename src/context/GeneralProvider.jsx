@@ -1,4 +1,5 @@
 import { createContext, useState } from "react";
+import Cookies from "js-cookie";
 
 const GeneralContext = createContext();
 
@@ -6,10 +7,11 @@ const GeneralProvider = ({ children }) => {
     /* ESTADOS */
     const [userActivo, setUserActivo] = useState(false);
     const [modalAuth, setModalAuth] = useState(false);
-    const [userActual, setUserActual] = useState([]);
+    const [userActual, setUserActual] = useState(() => {
+        const jsonString = Cookies.get('userData');
+        return jsonString ? JSON.parse(jsonString) : [];
+    });
     const [authActual, setAuthActual] = useState(true);
-    
-
 
     return (
         <GeneralContext.Provider
@@ -28,5 +30,5 @@ const GeneralProvider = ({ children }) => {
     )
 }
 
-export {GeneralProvider};
+export { GeneralProvider };
 export default GeneralContext;

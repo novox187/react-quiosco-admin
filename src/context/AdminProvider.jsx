@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import clienteAxios from "../config/axios";
 import socketio from "socket.io-client";
 import axios from "axios";
+import Cookies from "js-cookie";
 const AdminContext = createContext();
 
 
@@ -30,7 +31,10 @@ const AdminProvider = ({ children }) => {
 
 
     /* TOKEN PARA LA CONECCION CON EL BACKEND*/
-    const token = localStorage.getItem("AUTH_TOKEN");
+    const jsonString = Cookies.get('userData');
+    const userData = JSON.parse(jsonString);
+
+    const token = userData.token;
 
     const Usuario = localStorage.getItem("USER");
 

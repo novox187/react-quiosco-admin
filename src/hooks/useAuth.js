@@ -5,14 +5,21 @@ import clienteAxios from "../config/axios";
 import { toast } from "react-toastify";
 import useGeneralContext from "./useGeneralContext";
 import { data } from "autoprefixer";
+import Cookies from "js-cookie";
 
 export const useAuth = ({ middleware, url }) => {
   const token = localStorage.getItem("AUTH_TOKEN");
   const navigate = useNavigate();
   const [loadingRegistro, setLoadingRegistro] = useState(false);
   const [loadingLogin, setLoadingLogin] = useState(false);
-  const { setUserActivo, modalAuth, setModalAuth, setPedido, setUserActual } =
-    useGeneralContext();
+  const {
+    setUserActivo,
+    modalAuth,
+    setModalAuth,
+    setPedido,
+    setUserActual,
+    userActual,
+  } = useGeneralContext();
 
   const fetcher = async () => {
     const response = await clienteAxios("/api/employees/session", {
@@ -23,8 +30,11 @@ export const useAuth = ({ middleware, url }) => {
     return response.data;
   };
 
-  const { data: user, error, mutate } = useSWR("/api/employees/session", fetcher);
-  
+  const {
+    data: user,
+    error,
+    mutate,
+  } = useSWR("/api/employees/session", fetcher);
   const login = async (datos, setErrores) => {
     setErrores([]);
     setLoadingLogin(true);
@@ -35,12 +45,13 @@ export const useAuth = ({ middleware, url }) => {
       setErrores([]);
       setModalAuth(!modalAuth);
       fetcher();
-      toast.success(`Bienvenido ${data?.user?.name}`);
-      setUserActual(data.user);
+      toast.success(`Bienvenido ${data?.name}`);
+      setUserActual(data);
+      Cookies.set('userData', JSON.stringify(data), { expires: 2 });
       await mutate();
       setUserActivo(true);
       setLoadingLogin(false);
-      console.log(data)
+      console.log(Cookies.get('userData'));
     } catch (error) {
       console.error(error);
       setErrores(Object.values(error.response.data.errors));
@@ -55,7 +66,9 @@ export const useAuth = ({ middleware, url }) => {
       const { data } = await clienteAxios.post("/api/employee/register", datos);
       localStorage.setItem("AUTH_TOKEN", data.token);
       setErrores([]);
-      toast.success(`Bienvenido ${data?.employee?.first_name} ${data?.employee?.last_name}`);
+      toast.success(
+        `Bienvenido ${data?.employee?.first_name} ${data?.employee?.last_name}`
+      );
       setUserActual(data.employee);
       await mutate();
       localStorage.setItem("USER", datos.email);
@@ -87,39 +100,53 @@ export const useAuth = ({ middleware, url }) => {
   };
 
   useEffect(() => {
-        if (middleware === "auth" && user && user?.rol == 'admin') {
-      navigate('/admin');
+    if (middleware === "auth" && userActual && userActual?.rol == "admin") {
+      navigate("/admin");
     }
-    if (middleware === "auth" && user && user?.rol == 'mesero') {
-      navigate('/admin/mesero');
+    if (middleware === "auth" && userActual && userActual?.rol == "mesero") {
+      navigate("/admin/mesero");
     }
-    if (middleware === "auth" && user && user?.rol == 'cocinero') {
-      navigate('/admin/cocinero');
+    if (middleware === "auth" && userActual && userActual?.rol == "cocinero") {
+      navigate("/admin/cocinero");
     }
-  
-    if (middleware === "administracion" && user && !user?.rol) {
+
+    if (middleware === "administracion" && userActual && !userActual?.rol) {
       navigate("/");
     }
 
-    if (user) {
+    if (userActual) {
       setUserActivo(true);
     } else {
       setUserActivo(false);
     }
 
-        if (middleware === "administracion" && error) {
+    if (middleware === "administracion" && error) {
       navigate("/");
     }
-    if (middleware === "panel" && user && user?.rol !== 'admin') {
+    if (middleware === "panel" && userActual && userActual?.rol !== "admin") {
       navigate("/");
     }
-    if (middleware === "categorias" && user && user?.rol !== 'admin') {
+    if (
+      middleware === "categorias" &&
+      userActual &&
+      userActual?.rol !== "admin"
+    ) {
       navigate("/");
     }
-    if (middleware === "despacho" && user && user?.rol !== 'admin' && user?.rol !== 'mesero') {
+    if (
+      middleware === "despacho" &&
+      userActual &&
+      userActual?.rol !== "admin" &&
+      userActual?.rol !== "mesero"
+    ) {
       navigate("/");
     }
-    if (middleware === "ordenes" && user && user?.rol !== 'admin' && user?.rol !== 'cocinero') {
+    if (
+      middleware === "ordenes" &&
+      userActual &&
+      userActual?.rol !== "admin" &&
+      userActual?.rol !== "cocinero"
+    ) {
       navigate("/");
     }
   }, [user, error]);
