@@ -6,6 +6,8 @@ import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, User, DropdownSe
 import RelojIcon from './icons/RelojIcon';
 import EntrarIcon from './icons/EntrarIcon';
 import { Link } from 'react-router-dom';
+import Conf from './icons/ConfIcon';
+import ConfIcon from './icons/ConfIcon';
 export default function Usuario() {
 
     const { setModalAuth, modalAuth, userActual } = useGeneralContext();
@@ -44,8 +46,10 @@ export default function Usuario() {
                     <DropdownSection>
                         {user &&
                             (
-                                <DropdownItem key="opciones" startContent={<RelojIcon />} className={`${!user && 'hidden'}`}>
-                                    <Link to='/historial'>Historial</Link>
+                                <DropdownItem key="opciones" startContent={<ConfIcon className='size-5' />} className={`${!user && 'hidden'}`}>
+                                    <Link to='/admin/conf'>
+                                        <p className="text-white">Configuracion</p>
+                                    </Link>
                                 </DropdownItem>
                             )}
                         <DropdownItem

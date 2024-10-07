@@ -14,6 +14,8 @@ import ResivosPedidos from './views/admin/ResivosPedidos'
 import RegistroInforme from './components/admin/dashboard/RegistroInforme'
 import Repartidor from './views/admin/Repartidor'
 import PedidoMapa from './components/admin/PedidoMapa'
+import Configuracion from './views/Config/Configuracion'
+import ConfiguracionesLayout from './layouts/ConfiguracionesLayout'
 const router = createBrowserRouter([
 
     {
@@ -57,6 +59,16 @@ const router = createBrowserRouter([
                 element: <RegistroInforme />
             },
 
+        ]
+    },
+    {
+        path: '/admin/conf',
+        element: <AdminProvider><ConfiguracionesLayout /></AdminProvider>,
+        children: [
+            {
+                index: true,
+                element: <Configuracion />
+            },
         ]
     },
     {
