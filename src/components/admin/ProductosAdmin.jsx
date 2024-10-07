@@ -52,7 +52,7 @@ export default function ProductosAdmin({ producto }) {
 
     return (
         <Card
-            disableAnimation={true}
+          
             className="h-[20rem] w-[15rem] sm:h-[17rem] sm:w-[11rem] md:h-[25rem] md:w-[17rem] 3xl:h-[25rem] 3xl:w-[20rem] flex flex-col justify-between items-center md:m-0  p-2 md:p-4 rounded-xl shadow-zinc-800  bg-zinc-900 relative box-content bg-origin-content font-raleway overflow-hidden z-0">
             <div className=" absolute  md:space-x-1 pr-3 z-10">
                 {diasTranscurridos <= 30 ? (
@@ -108,7 +108,7 @@ export default function ProductosAdmin({ producto }) {
             </div>
 
             <div className=" flex flex-col justify-center w-full h-[10%] px-1 pb-2">
-                <p className=" mt-1 xl:mt-2 2xl:mt-5 font-black text-sm md:text-xl 2xl:text-3xl text-fama">
+                <p className=" mt-1 xl:mt-2 2xl:mt-5 font-black text-sm md:text-xl 2xl:text-3xl text-red-800">
                     {formatearDinero(precio)}
                 </p>
             </div>
@@ -156,7 +156,7 @@ export default function ProductosAdmin({ producto }) {
 
                         <button
                             type="button"
-                            className="flex flex-col justify-center items-center hover:bg-fama hover:opacity-75 px-1.5 py-2 rounded uppercase font-bold text-white text-center w-10 p-1 md:p-2 cursor-pointer h-full"
+                            className="flex flex-col justify-center items-center hover:bg-red-800 hover:opacity-75 px-1.5 py-2 rounded uppercase font-bold text-white text-center w-10 p-1 md:p-2 cursor-pointer h-full"
                             onClick={() => handleClickModalEliminar(producto?.id, producto?.nombre)}
                             disabled={!productoOpcionesActivo}
                         >

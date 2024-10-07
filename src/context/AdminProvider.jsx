@@ -4,6 +4,7 @@ import clienteAxios from "../config/axios";
 import socketio from "socket.io-client";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { useDisclosure } from "@nextui-org/react";
 const AdminContext = createContext();
 
 
@@ -30,11 +31,15 @@ const AdminProvider = ({ children }) => {
     }, []);
 
 
-    /* TOKEN PARA LA CONECCION CON EL BACKEND*/
+    // Obtener el token y los datos del usuario desde las cookies
     const jsonString = Cookies.get('userData');
-    const userData = JSON.parse(jsonString);
-
-    const token = userData.token;
+    let userData = null;
+    try {
+        userData = JSON.parse(jsonString);
+    } catch (error) {
+        console.error("Error parsing userData cookie:", error);
+    }
+    const token = userData?.token || localStorage.getItem("AUTH_TOKEN");
 
     const Usuario = localStorage.getItem("USER");
 
@@ -120,8 +125,24 @@ const AdminProvider = ({ children }) => {
     const [loadingNuevaOrden, setLoadingNuevaOrden] = useState(null);
     const [precioPedido, setPrecioPedido] = useState(0);
     const [loadingConfirmarPedidoModal, setLoadingConfirmarPedidoModal] = useState(false);
+    const { isOpen: isOpenDireccionEntrega, onOpen: onOpenDireccionEntrega, onOpenChange: onOpenChangeDireccionEntrega } = useDisclosure();
+    const {isOpen: isOpenConfirmarCancelarEntrega, onOpen: onOpenConfirmarCancelarEntrega, onOpenChange: onOpenChangeConfirmarCancelarEntrega} = useDisclosure();
 
+    const [pedidoEnCurso, setPedidoEnCurso] = useState(null);
+    const [loadingCancelarPedido, setLoadingCancelarPedido] = useState(false);
+    const [loadingFinalizarPedido, setLoadingFinalizarPedido] = useState(false);
 
+    useEffect(() => {
+        const jsonString = Cookies.get('pedidoEnCurso');
+        if (jsonString) {
+            try {
+                setPedidoEnCurso(JSON.parse(jsonString));
+            } catch (error) {
+                console.error('Error al parsear la cookie "pedidoEnCurso":', error);
+                setPedidoEnCurso(null); // O cualquier otro valor por defecto
+            }
+        }
+    }, []);
     useEffect(() => {
         const nuevoTotal = pedidoMesero.reduce((total, producto) => {
             let precioProducto = producto.precio + producto.totalOpciones;
@@ -842,8 +863,57 @@ const AdminProvider = ({ children }) => {
     }
 
 
+    const asignarPedido = async (pedidoId) => {
+        const token = localStorage.getItem("AUTH_TOKEN");
+        try {
+            const { data } = await clienteAxios.post(`/api/pedidos/repartidor/asignar/${pedidoId}`, {}, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                },
+            });
+            setPedidoEnCurso(data.data);
+            Cookies.set("pedidoEnCurso", JSON.stringify(data.data), { expires: 2 });
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
-
+    const cancelarPedido = async (id) => {
+        try {
+            const { data } = await clienteAxios.patch(`/api/pedidos/repartidor/cancelar/${id}`, {}, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                },
+            });
+            setPedidoEnCurso(null);
+            Cookies.remove('pedidoEnCurso');
+            window.location.reload();
+            setLoadingCancelarPedido(false);
+        } catch (error) {
+            console.error(error);
+            setLoadingCancelarPedido(false);
+        }
+    };
+    
+    const finalizarPedido = async (id) => {
+        try {
+            const { data } = await clienteAxios.patch(`/api/pedidos/repartidor/finalizar/${id}`, {}, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                },
+            });
+            setPedidoEnCurso(null);
+            Cookies.remove('pedidoEnCurso');
+            window.location.reload();
+            setLoadingFinalizarPedido(false);
+        } catch (error) {
+            console.error(error);
+            setLoadingFinalizarPedido(false);
+        }
+    };
 
     return (
         <AdminContext.Provider
@@ -951,7 +1021,6 @@ const AdminProvider = ({ children }) => {
                 loadingConfirmarPedidoModal,
                 setRegistroVer,
                 registroVer,
-
                 setModalAbrirCaja,
                 modalAbrirCaja,
                 setLoadingAbrirCaja,
@@ -968,7 +1037,22 @@ const AdminProvider = ({ children }) => {
                 setRegistros,
                 registros,
                 logoUrl,
-                token
+                token,
+                isOpenDireccionEntrega,
+                onOpenDireccionEntrega,
+                onOpenChangeDireccionEntrega,
+                asignarPedido,
+                pedidoEnCurso,
+                setPedidoEnCurso,
+                cancelarPedido,
+                isOpenConfirmarCancelarEntrega,
+                onOpenConfirmarCancelarEntrega,
+                onOpenChangeConfirmarCancelarEntrega,
+                loadingCancelarPedido,
+                setLoadingCancelarPedido,
+                setLoadingFinalizarPedido,
+                loadingFinalizarPedido,
+                finalizarPedido
             }}
         >
             {children}

@@ -88,7 +88,7 @@ export default function ModalLugarMesero() {
             }
             <Button
                 type="button"
-                className={`${lugarMesero === ''? 'cursor-not-allowed' : 'cursor-pointer'} bg-fama  w-[10rem] hover:opacity-90 font-bold p-2 text-xl `}
+                className={`${lugarMesero === ''? 'cursor-not-allowed' : 'cursor-pointer'} bg-red-800  w-[10rem] hover:opacity-90 font-bold p-2 text-xl `}
                 onClick={() => {
                     if (lugarMesero !== '') {
                         handleClickEnviar()

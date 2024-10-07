@@ -61,7 +61,7 @@ const router = createBrowserRouter([
     },
     {
         path: '/',
-        element: <AuthLayout />,
+        element: <AdminProvider><AuthLayout /></AdminProvider>,
         children: [
             {
                 index:true,

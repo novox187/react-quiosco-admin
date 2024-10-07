@@ -168,7 +168,7 @@ export default function ModalCrearProducto() {
                                 className=' w-[50%] rounded' />
                         </div>
                     </div>
-                    <small className={`${errorImg ? '' : 'hidden'} text-fama font-bold mt-7 animate-bounce`}>*las imagenes con formato <b>jpg</b>  no son permitidas</small>
+                    <small className={`${errorImg ? '' : 'hidden'} text-red-800 font-bold mt-7 animate-bounce`}>*las imagenes con formato <b>jpg</b>  no son permitidas</small>
 
                     <div className='flex flex-col w-full'>
                         <label htmlFor="nombre">Nombre: </label>

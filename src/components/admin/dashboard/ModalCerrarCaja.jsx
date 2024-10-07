@@ -56,7 +56,7 @@ export default function ModalCerrarCaja() {
                 </svg>
             </button>
             <span className="font-bold ">Estas seguro de querer cerrar caja?</span>
-            <p className=" text-zinc-300">Escribe la palabra <strong className="text-fama">confirmar</strong> para cerrar caja.</p>
+            <p className=" text-zinc-300">Escribe la palabra <strong className="text-red-800">confirmar</strong> para cerrar caja.</p>
             <input
                 type="text"
                 name="confirmacion"
@@ -67,7 +67,7 @@ export default function ModalCerrarCaja() {
 
             <Button
                 type="button"
-                className={`${confirmacion !== 'confirmar' ? 'opacity-60 cursor-not-allowed' : 'hover:opacity-90 cursor-pointer'} w-full bg-fama rounded p-2 `}
+                className={`${confirmacion !== 'confirmar' ? 'opacity-60 cursor-not-allowed' : 'hover:opacity-90 cursor-pointer'} w-full bg-red-800 rounded p-2 `}
                 onClick={() => handleCerrarCaja()}
                 isDisabled={confirmacion !== 'confirmar' || loginCerrarCaja}
             >

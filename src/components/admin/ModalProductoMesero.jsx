@@ -134,16 +134,16 @@ export default function ModalProductoMesero() {
 
                     {promocion ? (
                         <div className='flex flex-row items-center mt-2'>
-                            <p className=" font-black text-2xl text-fama line-through opacity-40">
+                            <p className=" font-black text-2xl text-red-800 line-through opacity-40">
                                 {formatearDinero(producto.precio + totalOpciones)}
                             </p>
                             <span className=' opacity-0'>_-</span>
-                            <p className=" font-black text-3xl text-fama ">
+                            <p className=" font-black text-3xl text-red-800 ">
                                 /  {precioDescuento()}
                             </p>
                         </div>
                     ) : (
-                        <p className="mt-3 font-black text-5xl text-fama">
+                        <p className="mt-3 font-black text-5xl text-red-800">
                             {formatearDinero(producto.precio + totalOpciones)}
                         </p>
                     )}

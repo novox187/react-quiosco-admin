@@ -143,7 +143,7 @@ export default function TablaRegistro() {
                 }
 
                 if (registro.accion == 'eliminar') {
-                    color = 'bg-fama'
+                    color = 'bg-red-800'
                 }
                 if (registro.accion == 'cambiar_categoria') {
                     color = 'bg-purple-700'
@@ -155,7 +155,7 @@ export default function TablaRegistro() {
                     color = 'bg-green-500'
                 }
                 if (registro.accion == 'cerrar_caja') {
-                    color = 'bg-fama'
+                    color = 'bg-red-800'
                 }
                 return (
                     <>
@@ -167,13 +167,13 @@ export default function TablaRegistro() {
             case "responsable":
                 return (
                     <Chip size="sm">
-                        {registro.user.name}
+                        {registro.employee.name}
                     </Chip>
                 );
             case "rol":
                 return (
                     <Chip size="sm" className=" ">
-                        {registro.user.rol}
+                        {registro.employee.rol}
                     </Chip>
                 );
             case "accion":

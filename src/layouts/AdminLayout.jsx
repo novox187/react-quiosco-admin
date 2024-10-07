@@ -40,7 +40,7 @@ const customStyles = {
 
 Modal.setAppElement('#root')
 export default function AdminLayout() {
-    useAuth({ middleware: 'administracion' })
+    /* useAuth({ middleware: 'administracion' }) */
     const {
         modalCrearCategoria,
         modalEliminarOrden,

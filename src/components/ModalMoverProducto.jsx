@@ -38,7 +38,7 @@ export default function ModalMoverProducto() {
             </button>
             <div className=" text-mini">
                 Elije a que categoria quieres mover el producto <br />
-                <span className=" text-fama text-base font-bold md:text-2xl">{formatearTextoVista(nombre)}</span>
+                <span className=" text-red-800 text-base font-bold md:text-2xl">{formatearTextoVista(nombre)}</span>
             </div>
             <div className="grid gap-1 grid-cols-3 xs:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 mb-3 w-full">
                 {categorias?.map(categoria => (
@@ -54,7 +54,7 @@ export default function ModalMoverProducto() {
             </div>
             <Button
                 type="button"
-                className={`${!categoriaMover?.id ? 'cursor-not-allowed' : 'cursor-pointer'} bg-fama w-full hover:opacity-90 font-bold p-2 py-4 md:py-5 text-xl `}
+                className={`${!categoriaMover?.id ? 'cursor-not-allowed' : 'cursor-pointer'} bg-red-800 w-full hover:opacity-90 font-bold p-2 py-4 md:py-5 text-xl `}
                 onClick={() => {
                     if (categoriaMover?.id) {
                         handleClickMoverCategoria()

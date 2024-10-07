@@ -72,7 +72,7 @@ export default function Acordion({ categoria }) {
                         </button>
                         <button
                             type="button"
-                            className=" hover:bg-fama transition-colors p-1 rounded"
+                            className=" hover:bg-red-800 transition-colors p-1 rounded"
                             onClick={() => handleClickModalEliminarCategoria()}
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 md:w-5 h-4 md:h-5">

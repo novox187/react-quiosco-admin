@@ -47,16 +47,16 @@ export default function ResumenProductoMesero({ producto }) {
           {promocion ? (
             <div className='flex flex-row items-center mt-2'>
               Precio: <span className='opacity-0'>_</span>
-              <p className=" font-black text-bse text-fama line-through opacity-50">
+              <p className=" font-black text-bse text-red-800 line-through opacity-50">
                 {formatearDinero(precio + totalOpciones)}
               </p>
               <span className=' opacity-0'>s</span>
-              <p className=" font-black text-base text-fama ">
+              <p className=" font-black text-base text-red-800 ">
                 /  {precioDescuento()}
               </p>
             </div>
           ) : (
-            <p className="mt-3 font-black text-base text-fama mb-3">
+            <p className="mt-3 font-black text-base text-red-800 mb-3">
               Precio: {formatearDinero(precio + totalOpciones)}
             </p>
           )}
@@ -64,7 +64,7 @@ export default function ResumenProductoMesero({ producto }) {
           {promocion ? (
             <p className="text-lg text font-bold">
               Descuento:
-              <span className=" text-fama mx-1">
+              <span className=" text-red-800 mx-1">
                 {promocion.descuento}%
               </span>
             </p>

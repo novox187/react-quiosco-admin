@@ -31,7 +31,7 @@ export default function ModalEliminarCategoria() {
                     </svg>
                 </button>
                 <span className="font-bold ">Estas seguro de eliminar esta categoria?</span>
-                <p>La categoria <strong className="text-fama">{nombre}</strong> no estara disponible para el usuario ni para el administrador. </p>
+                <p>La categoria <strong className="text-red-800">{nombre}</strong> no estara disponible para el usuario ni para el administrador. </p>
                 <input
                     type="text"
                     name="confirmacion"
@@ -42,7 +42,7 @@ export default function ModalEliminarCategoria() {
 
                 <Button
                     type="button"
-                    className={` w-full bg-fama  p-4 `}
+                    className={` w-full bg-red-800  p-4 `}
                     onClick={() => handleClickEliminarCategoria()}
                     isDisabled={confirmacion !== nombre}
                 >

@@ -25,7 +25,6 @@ export default function Ordenes() {
           },
         });
         setPedidosQuery(data);
-        console.log(data)
       } catch (error) {
         console.error(error)
         console.error('inicia session')
@@ -177,12 +176,12 @@ export default function Ordenes() {
                 </div>
 
                 <div className=" w-full">
-                  <p className="text-lg font-bold text-fama">
+                  <p className="text-lg font-bold text-red-800">
                     Lugar: {""}
                     <span className="font-normal text-white">{pedido.lugar}</span> <br />
                   </p>
 
-                  <p className="text-lg font-bold text-fama">
+                  <p className="text-lg font-bold text-red-800">
                     Cliente: {""}
                     <span className="font-normal text-white">{pedido.user.name}</span> <br />
                     <span className="flex">

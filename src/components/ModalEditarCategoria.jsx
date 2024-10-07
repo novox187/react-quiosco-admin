@@ -98,7 +98,7 @@ export default function ModalEditarCategoria() {
                             className=' w-[50%] rounded' />
                     </div>
                 </div>
-                <small className={`${errorImg ? '' : 'hidden'} text-fama font-bold mt-7 animate-bounce`}>*las imagenes con formato <b>jpg</b>  no son permitidas</small>
+                <small className={`${errorImg ? '' : 'hidden'} text-red-800 font-bold mt-7 animate-bounce`}>*las imagenes con formato <b>jpg</b>  no son permitidas</small>
                 <BotonCarga loading={loadingEditarCategoria} texto={'Editar'} />
             </form>
         </div>

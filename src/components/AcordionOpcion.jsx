@@ -88,7 +88,7 @@ export default function AcordionOpcion({ option, index, setOpcionesProducto, opc
                         </div>
                         <div className="flex flex-row justify-center items-center space-x-2">
                             <button
-                                className="hover:bg-fama p-0.5 rounded"
+                                className="hover:bg-red-800 p-0.5 rounded"
                                 type="button"
                                 onClick={() => deleteOption(index)}
                             >

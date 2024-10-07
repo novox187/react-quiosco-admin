@@ -60,7 +60,7 @@ export default function ProductosMesero({ producto }) {
                 <p className="w-full leading-7 py-1 overflow-hidden line-clamp-2" >{formatearTextoVista(descripcion)}</p>
                 <div className="flex flex-row w-full items-center justify-between pt-2">
                     <div className="leading-tight">
-                        <h3 className="text-fama font-bold text-sm md:text-base">{formatearDinero(precio)} USD.</h3>
+                        <h3 className="text-red-800 font-bold text-sm md:text-base">{formatearDinero(precio)} USD.</h3>
                         <small className="text-zinc-500  ">{peso} <span className=" text-mini">{tipo_peso}</span></small>
                     </div>
                     <Button isIconOnly color="danger" variant="faded" aria-label="Take a photo" size="sm" onClick={() => [handleclickModalProductoMesero(), handleSetProducto(producto)]}>

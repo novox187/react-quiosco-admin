@@ -72,7 +72,7 @@ export default function ModalEliminarOrden() {
 
                 <div className="flex flex-col justify-center items-center text-center">
                     <h1 className=" text-1xl font-bold mt-4">Califica al Usuario</h1>
-                    <h2 className=" text-fama font-bold">{ordenEliminar.name}</h2>
+                    <h2 className=" text-red-800 font-bold">{ordenEliminar.name}</h2>
                     <p className="">Califica al usuario para tenerlo en cuenta en las siguientes compras </p>
                     <div className=" flex items-center mt-8">
                         {[1, 2, 3, 4, 5].map((value) => (

@@ -23,12 +23,9 @@ export default function AdminSidebar() {
                     </div>
                 </div>
 
-                {user && (
+                {user?.rol === 'admin' && (
                     <nav className='flex flex-row justify-around text-mini overflow-auto lg:flex-col  lg:border-none min-w-60  lg:text-lg pr-4 py-3'>
                         <Link to="/admin" className={`font-bold uppercase ${location.pathname === '/admin' ? 'bg-zinc-800' : ''}  p-3 lg:p-4 rounded-xl lg:rounded-l-xl`}>Panel</Link>
-                        <Link to="/admin/cocinero" className={`font-bold uppercase ${location.pathname === '/admin/cocinero' ? 'bg-zinc-800' : ''}  p-3 lg:p-4 rounded-xl lg:rounded-l-xl`}>Chef</Link>
-                        <Link to="/admin/mesero" className={`font-bold uppercase ${location.pathname === '/admin/mesero' ? 'bg-zinc-800' : ''}  p-3 lg:p-4 rounded-xl lg:rounded-l-xl`}>Mesero</Link>
-                        <Link to="/admin/repartidor" className={`font-bold uppercase ${location.pathname === '/admin/repartidor' ? 'bg-zinc-800' : ''}  p-3 lg:p-4 rounded-xl lg:rounded-l-xl`}>Respartidor</Link>
                         <Link to="/admin/productos" className={`font-bold uppercase ${location.pathname === '/admin/productos' ? 'bg-zinc-800' : ''}  p-3 lg:p-4 rounded-xl lg:rounded-l-xl`}>Productos</Link>
                         <Link to="/admin/categorias" className={`font-bold uppercase ${location.pathname === '/admin/categorias' ? 'bg-zinc-800' : ''}  p-3 lg:p-4 rounded-xl lg:rounded-l-xl`}>Categorias</Link>
                         <Link to="/admin/resivos" className={`font-bold uppercase ${location.pathname === '/admin/resivos' ? 'bg-zinc-800' : ''}  p-3 lg:p-4 rounded-xl lg:rounded-l-xl`}>Resivos</Link>
@@ -43,6 +40,11 @@ export default function AdminSidebar() {
                 {user?.rol === 'cocinero' && (
                     <nav className='flex flex-row justify-around text-mini overflow-auto lg:flex-col  lg:border-none min-w-60  lg:text-lg pr-4 py-3'>
                         <Link to="/admin/cocinero" className={`font-bold uppercase ${location.pathname === '/admin/cocinero' ? 'bg-zinc-800' : ''}  p-3 lg:p-4 rounded-xl lg:rounded-l-xl`}>Chef</Link>
+                    </nav>
+                )}
+                {user?.rol === 'repartidor' && (
+                    <nav className='flex flex-row justify-around text-mini overflow-auto lg:flex-col  lg:border-none min-w-60  lg:text-lg pr-4 py-3'>
+                        <Link to="/admin/repartidor" className={`font-bold uppercase ${location.pathname === '/admin/repartidor' ? 'bg-zinc-800' : ''}  p-3 lg:p-4 rounded-xl lg:rounded-l-xl`}>Repartidor</Link>
                     </nav>
                 )}
 

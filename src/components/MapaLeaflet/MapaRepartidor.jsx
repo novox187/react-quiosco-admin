@@ -28,10 +28,10 @@ function RouteCalculator({ start, end }) {
         <>
             <Polyline positions={route.map(coord => [coord[1], coord[0]])} color="green" />
             <div className='flex flex-col space-y-1' style={{ position: 'absolute', left: 0, top: 0, padding: 2, zIndex: 1000 }}>
-                <Chip color='success' variant='faded'>
+                <Chip className=' bg-white text-zinc-700 shadow-xl'  >
                     Duración aprox: {duration ? `${(duration / 60).toFixed(2)} minutos` : 'Calculando...'}
                 </Chip>
-                <Chip color='success' variant='faded'>
+                <Chip className=' bg-white text-zinc-700 shadow-xl' >
                     Distancia aprox: {distance ? `${(distance / 1000).toFixed(2)} km` : 'Calculando...'}
                 </Chip>
             </div>
@@ -41,12 +41,12 @@ function RouteCalculator({ start, end }) {
 
 function Direccion() {
     return (
-        <p className='w-full flex justify-center items-center' style={{ display: 'flex', position: 'absolute', left: 0, bottom: 0, background: 'white', color: 'black', padding: 2, borderRadius: 5, zIndex: 1000 }}>
+        <p className='w-full flex justify-center items-center text-center' style={{ display: 'flex', position: 'absolute', left: 0, bottom: 0, background: 'white', color: 'black', padding: 2, borderRadius: 5, zIndex: 1000 }}>
             Recoje el pedido y entrgalo en la direccion: Barrio 6 de diciembre, Orellana</p>
     )
 }
 
-/* function DisableMapInteractions() {
+function DisableMapInteractions() {
     const map = useMap();
 
     useEffect(() => {
@@ -60,13 +60,9 @@ function Direccion() {
     }, [map]);
 
     return null;
-} */
+}
 
-export default function MapaRepartidor() {
-    const [positions, setPositions] = useState([
-        [-0.43855503307235705, -77.00431070445268], // Punto A
-        [-0.47105781780871325, -76.98323627116352],   // Punto B
-    ]);
+export default function MapaRepartidor({positions}) {
 
     return (
         <MapContainer center={positions[0]} zoom={13} style={{ height: '100%', width: '100%' }} zoomControl={false}>

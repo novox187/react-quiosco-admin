@@ -53,21 +53,44 @@ export const formatearTextoVista = (texto) => {
   return textoFormateado;
 };
 export const formatearFecha = (fechaISO) => {
+  const fecha = new Date(fechaISO);
+  const dia = fecha.getDate();
+  const mes = fecha.getMonth(); // Los meses son indexados desde 0 (enero) a 11 (diciembre)
+  const anio = fecha.getFullYear();
+  const horas = fecha.getHours();
+  const minutos = fecha.getMinutes();
 
-    const fecha = new Date(fechaISO);
-    const dia = fecha.getDate();
-    const mes = fecha.getMonth(); // Los meses son indexados desde 0 (enero) a 11 (diciembre)
-    const anio = fecha.getFullYear();
-    const horas = fecha.getHours();
-    const minutos = fecha.getMinutes();
+  const mesesEnEspanol = [
+    "enero",
+    "febrero",
+    "marzo",
+    "abril",
+    "mayo",
+    "junio",
+    "julio",
+    "agosto",
+    "septiembre",
+    "octubre",
+    "noviembre",
+    "diciembre",
+  ];
 
-    const mesesEnEspanol = [
-        "enero", "febrero", "marzo", "abril", "mayo", "junio",
-        "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
-    ];
+  // Formatea los minutos para que siempre tengan dos dígitos
+  const minutosFormateados = minutos < 10 ? `0${minutos}` : minutos;
 
-    // Formatea los minutos para que siempre tengan dos dígitos
-    const minutosFormateados = minutos < 10 ? `0${minutos}` : minutos;
-
-    return `${dia} de ${mesesEnEspanol[mes]} de ${anio} a las ${horas}:${minutosFormateados}`;
+  return `${dia} de ${mesesEnEspanol[mes]} de ${anio} a las ${horas}:${minutosFormateados}`;
 };
+
+export const generateGoogleMapsUrl = (positions) => {
+  if (positions.length < 2) {
+    return "";
+  }
+
+  const [origin, destination] = positions;
+  const [latB, lngB] = destination;
+
+  return `https://www.google.com/maps/dir/?api=1&origin=my+location&destination=${latB},${lngB}`;
+};
+
+/* https://www.google.com/maps/dir/?api=1&origin=LATITUD_A,LONGITUD_A&destination=LATITUD_B,LONGITUD_B */
+

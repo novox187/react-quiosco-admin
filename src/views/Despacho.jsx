@@ -195,7 +195,7 @@ export default function Despacho() {
 
                                 <div className=' flex flex-col w-full justify-center items-center'>
                                     <span className=' mt-8 text-white'>Numero de Pedido:</span>
-                                    <strong className=' text-4xl text-fama'>{pedido.numero_pedido}</strong>
+                                    <strong className=' text-4xl text-red-800'>{pedido.numero_pedido}</strong>
                                 </div>
 
                                 {pedido.productos.map((producto, index) => (
@@ -244,7 +244,7 @@ export default function Despacho() {
                             </div>
 
                             <div className='w-full'>
-                                <p className='text-lg font-bold text-fama'>
+                                <p className='text-lg font-bold text-red-800'>
                                     Cliente: {''}
                                     <div className=' flex space-x-1'>
                                         <span className='font-normal text-white'>{pedido.user.name}</span>
@@ -254,24 +254,24 @@ export default function Despacho() {
                                     </span>
                                 </p>
                                 {pedido.mesa ? (
-                                    <p className='text-lg font-bold text-fama'>
+                                    <p className='text-lg font-bold text-red-800'>
                                         Mesa: {''}
                                         <span className='font-normal text-white'>{pedido.mesa}</span>
                                     </p>
                                 ) : (
-                                    <p className='ttext-lg font-bold text-fama'>
+                                    <p className='ttext-lg font-bold text-red-800'>
                                         Lugar: {''}
                                         <span className='font-normal text-white'>Para llevar</span>
                                     </p>
                                 )}
 
 
-                                <p className='text-lg font-bold text-fama'>
+                                <p className='text-lg font-bold text-red-800'>
                                     Lugar: {''}
                                     <span className='font-normal text-slate-300'>{pedido.lugar}</span>
                                 </p>
 
-                                <p className='text-lg font-bold text-fama'>
+                                <p className='text-lg font-bold text-red-800'>
                                     Total a Pagar: {''}
                                     <span className='font-normal text-slate-300'>{formatearDinero(pedido.total)}</span>
                                 </p>

@@ -30,7 +30,7 @@ export default function ModalEliminarProducto() {
                 </svg>
             </button>
             <span className="font-bold ">Estas seguro de eliminar este producto?</span>
-            <p>El producto <strong className="text-fama">{nombre}</strong> no estara disponible para el usuario ni para el administrador. </p>
+            <p>El producto <strong className="text-red-800">{nombre}</strong> no estara disponible para el usuario ni para el administrador. </p>
             <input
                 type="text"
                 name="confirmacion"
@@ -41,7 +41,7 @@ export default function ModalEliminarProducto() {
 
             <Button
                 type="button"
-                className={`w-full bg-fama  p-5 `}
+                className={`w-full bg-red-800  p-5 `}
                 onClick={() => handleClickEliminarProducto()}
                 isDisabled={confirmacion !== nombre}
             >
