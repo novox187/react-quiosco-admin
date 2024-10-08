@@ -126,11 +126,14 @@ const AdminProvider = ({ children }) => {
     const [precioPedido, setPrecioPedido] = useState(0);
     const [loadingConfirmarPedidoModal, setLoadingConfirmarPedidoModal] = useState(false);
     const { isOpen: isOpenDireccionEntrega, onOpen: onOpenDireccionEntrega, onOpenChange: onOpenChangeDireccionEntrega } = useDisclosure();
-    const {isOpen: isOpenConfirmarCancelarEntrega, onOpen: onOpenConfirmarCancelarEntrega, onOpenChange: onOpenChangeConfirmarCancelarEntrega} = useDisclosure();
+    const { isOpen: isOpenConfirmarCancelarEntrega, onOpen: onOpenConfirmarCancelarEntrega, onOpenChange: onOpenChangeConfirmarCancelarEntrega } = useDisclosure();
 
     const [pedidoEnCurso, setPedidoEnCurso] = useState(null);
     const [loadingCancelarPedido, setLoadingCancelarPedido] = useState(false);
     const [loadingFinalizarPedido, setLoadingFinalizarPedido] = useState(false);
+
+    /* CONFIGURACIOES */
+    const [loadingUpdateConfig, setLoadingUpdateConfig] = useState(false);
 
     useEffect(() => {
         const jsonString = Cookies.get('pedidoEnCurso');
@@ -896,7 +899,7 @@ const AdminProvider = ({ children }) => {
             setLoadingCancelarPedido(false);
         }
     };
-    
+
     const finalizarPedido = async (id) => {
         try {
             const { data } = await clienteAxios.patch(`/api/pedidos/repartidor/finalizar/${id}`, {}, {
@@ -912,6 +915,55 @@ const AdminProvider = ({ children }) => {
         } catch (error) {
             console.error(error);
             setLoadingFinalizarPedido(false);
+        }
+    };
+
+    const CrearNegocio = async (formData) => {
+        try {
+            const token = localStorage.getItem('AUTH_TOKEN');
+            const response = await clienteAxios.post('/api/informacion/create', formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            console.log('Datos enviados:', response.data);
+        } catch (error) {
+            console.error('Error al enviar los datos:', error);
+        }
+    };
+
+    const ActualizarNegocio = async (id, formData) => {
+        setLoadingUpdateConfig(true);
+        try {
+            const token = localStorage.getItem('AUTH_TOKEN');
+            const response = await clienteAxios.post(`/api/informacion/update/${id}`, formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            setLoadingUpdateConfig(false);
+            toast.success('Datos actualizados correctamente');
+        } catch (error) {
+            console.error('Error al actualizar los datos:', error);
+            setLoadingUpdateConfig(false);
+            toast.error('Error al actualizar los datos');
+        }
+    };
+
+    const obtenerNegocio = async () => {
+        try {
+            const token = localStorage.getItem('AUTH_TOKEN');
+            const response = await clienteAxios.get('/api/informacion/view', { // Ruta actualizada
+                headers: {
+                    Authorization: `Bearer ${token}` // Incluye el token de autenticación
+                }
+            });
+            return response.data; // Devuelve los datos del negocio
+        } catch (error) {
+            console.error('Error al obtener los datos:', error);
+            return null; // Devuelve null en caso de error
         }
     };
 
@@ -1052,7 +1104,11 @@ const AdminProvider = ({ children }) => {
                 setLoadingCancelarPedido,
                 setLoadingFinalizarPedido,
                 loadingFinalizarPedido,
-                finalizarPedido
+                finalizarPedido,
+                CrearNegocio,
+                ActualizarNegocio,
+                obtenerNegocio,
+                loadingUpdateConfig
             }}
         >
             {children}
