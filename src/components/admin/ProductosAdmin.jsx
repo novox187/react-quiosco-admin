@@ -2,7 +2,7 @@ import useAdmin from '../../hooks/useAdmin';
 import { formatearDinero } from '../../helpers';
 import { formatearTextoVista } from '../../helpers';
 import { useState } from 'react';
-import { Image, Card, Chip, Button } from '@nextui-org/react';
+import { Image, Card, Chip, Button, image } from '@nextui-org/react';
 
 export default function ProductosAdmin({ producto }) {
 
@@ -22,7 +22,7 @@ export default function ProductosAdmin({ producto }) {
 
     const [productoOpcionesActivo, setProductoOpcionesActivo] = useState(false);
 
-    const handleClickDatosProducto = (id, nombre, precio, peso, tipo_peso, descripcion, categoria, imagen, promo_id) => {
+    const handleClickDatosProducto = (id, nombre, precio, peso, tipo_peso, descripcion, categoria, imagen, promo_id, opciones_producto) => {
 
         const datosProducto = {
             id: id,
@@ -31,6 +31,7 @@ export default function ProductosAdmin({ producto }) {
             precio: precio,
             peso: peso,
             tipo_peso: tipo_peso,
+            opciones_producto: opciones_producto,
             descripcion: descripcion,
             categoria_id: categoria,
             promo_id: promo_id,
@@ -83,10 +84,10 @@ export default function ProductosAdmin({ producto }) {
                     </Chip>
                 ) : ('')}
             </div>
-            <div className="w-full h-[50%] relative overflow-hidden">
+            <div className=" flex justify-center items-center w-full h-[50%] relative overflow-hidden">
                 <Image
                     alt={`imagen ${nombre}`}
-                    className='z-0'
+                    className={` ${ imagen === "https://res.cloudinary.com/dfrsffngq/image/upload/v1723837093/logo.png" ? 'h-[10rem] w-[10rem]' : ''} z-0  m-auto`}
                     src={`${imagen}`}
                 />
             </div>
@@ -146,7 +147,7 @@ export default function ProductosAdmin({ producto }) {
                         <button
                             type="button"
                             className="flex flex-col justify-center items-center bg-zinc-800 hover:opacity-75 px-1.5 py-2 rounded uppercase font-bold text-white text-center w-10 p-1 md:p-2 cursor-pointer h-full "
-                            onClick={() => handleClickDatosProducto(producto.id, producto.nombre, producto.precio, producto.peso, producto.tipo_peso, producto.descripcion, producto.categoria_id, producto.imagen, producto.promo_id)}
+                            onClick={() => handleClickDatosProducto(producto.id, producto.nombre, producto.precio, producto.peso, producto.tipo_peso, producto.descripcion, producto.categoria_id, producto.imagen, producto.promo_id, producto.contenedor_opciones)}
                             disabled={!productoOpcionesActivo}
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">

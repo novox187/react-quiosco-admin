@@ -1,16 +1,14 @@
 import React from 'react';
-import { createRef, useState, useEffect } from 'react'
+import { createRef, useState } from 'react'
 import { Input, Select, SelectItem } from '@nextui-org/react';
 import { formatearDinero, formatearTextoVista } from "../helpers";
 import Alerta from '../components/Alerta';
 import { formatearTextoDB } from '../helpers';
-import AcordionOpcion from './AcordionOpcion';
-import clienteAxios from '../config/axios';
 import useAdmin from '../hooks/useAdmin';
 import BotonCarga from './BotonCarga';
-import { toast } from 'react-toastify';
 import TipoSelect from './admin/TipoSelect';
 import { formatoNombreImg } from '../helpers';
+import ContenedorOpciones from './ContenedorOpciones';
 
 export default function ModalCrearProducto() {
     const nombreRef = createRef();
@@ -21,8 +19,6 @@ export default function ModalCrearProducto() {
     const { categorias, handleClickModalCategoria, setModalCrearProducto, modalCrearProducto, errores, setErrores, loadingCrearProducto, setLoadingCrearProducto, crearProducto } = useAdmin()
     const [selectedOption, setSelectedOption] = useState('sin_definir');
     const [opcionesProducto, setOpcionesProducto] = useState([]);
-    const [abrirContenedores, setAbrirContenedores] = useState(false)
-    const [contenedoresQuery, setContenedoresQuery] = useState([])
     const [imagenNuevoProducto, setImagenNuevoProducto] = useState([]);
     const [errorImg, setErrorImg] = useState(false);
     const [selectedKeys, setSelectedKeys] = React.useState("g");
@@ -51,32 +47,6 @@ export default function ModalCrearProducto() {
         }
 
     };
-
-
-    const obtenerContenedores = async () => {
-        if (localStorage.getItem('USER')) {
-            const token = localStorage.getItem("AUTH_TOKEN");
-            try {
-                const { data } = await clienteAxios("/api/contenedores", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                setContenedoresQuery(data)
-            } catch (error) {
-                console.log(error)
-            }
-        }
-    };
-    useEffect(() => {
-        obtenerContenedores()
-
-    }, [])
-
-    const addOptionMain = () => {
-        setOpcionesProducto([...opcionesProducto, { name: '', tipo: 'seleccion', opciones: {} }]);
-    };
-
 
     const handleClickCerrar = () => {
         setErrores([]);
@@ -116,14 +86,7 @@ export default function ModalCrearProducto() {
 
     }
 
-    const handelClickAgregarContenedor = (nombre, tipo, opciones, query) => {
-        const confirmacionOpciones = opcionesProducto.find(opcion => opcion.name === nombre);
-        if (!confirmacionOpciones) {
-            setOpcionesProducto([...opcionesProducto, { name: nombre, tipo: tipo, query: query, opciones: opciones }])
-        } else {
-            toast.error('El contenedor ' + nombre + ' ya esta agregado')
-        }
-    }
+
     return (
         <div className="flex flex-col w-screen h-dvh max-w-[40rem] text-white md:py-3 font-raleway bg-transparent ">
             <div className=" flex flex-col overflow-y-auto relative bg-zinc-900 rounded-xl p-5 z-20">
@@ -139,7 +102,7 @@ export default function ModalCrearProducto() {
                     </button>
                 </span>
                 <form
-                    className='flex flex-col w-full text-white items-center'
+                    className='flex flex-col w-full text-white items-center space-y-3'
                     onSubmit={handleSubmitNuevoProducto}
                     noValidate
                 >
@@ -197,7 +160,7 @@ export default function ModalCrearProducto() {
                                         <span className="text-default-400 text-small">$</span>
                                     </div>
                                 }
-                                
+
                             />
                         </div>
                         <div className='flex flex-col w-full'>
@@ -248,61 +211,12 @@ export default function ModalCrearProducto() {
                         </div>
                     </div>
 
-                    <div className='w-full'>
-                        <div
-                            onClick={() => setAbrirContenedores(!abrirContenedores)}
-                            className='flex flex-row justify-between items-center w-full p-2 md:p-4 rounded-xl bg-zinc-800 text-white shadow  mt-3 cursor-pointer'>
-                            <h1 className=' select-none'>Contenedores Existentes</h1>
-                            <img
-                                src="https://upload.wikimedia.org/wikipedia/commons/9/96/Chevron-icon-drop-down-menu-WHITE.png"
-                                className={`h-1 w-2 transition-all duration-75 select-none ${abrirContenedores && 'rotate-180'}`}
-                            />
-                        </div>
-                        <div className=' w-full space-y-1'>
-                            {contenedoresQuery.map((contenedor) => (
-                                <div
-                                    tabIndex={contenedor.id}
-                                    key={contenedor.id}
-                                    className={`flex flex-row justify-between items-center w-full bg-zinc-800 mt-1 rounded-xl transition-all ${abrirContenedores ? 'visible opcaity-100 h-auto p-2' : 'invisible opacity-0 max-h-0 h-auto'}`}
-                                >
-                                    <h1 className=' select-none'>{contenedor.nombre}</h1>
-                                    <span
-                                        onClick={() => handelClickAgregarContenedor(contenedor.nombre, contenedor.tipo, contenedor.opciones, true)}
-                                        className=' hover:bg-slate-500 p-1 rounded-xl transition-all cursor-pointer select-none'>
-                                        Agregar
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className='w-full'>
-                        <div>
-                            <h1>Crear contenedor de opciones</h1>
-                            <span className='text-mini opacity-60'>(opcional)</span>
-                        </div>
-
-                        {opcionesProducto.map((option, index) => (
-
-                            <AcordionOpcion
-                                option={option}
-                                index={index}
-                                key={index}
-                                setOpcionesProducto={setOpcionesProducto}
-                                opcionesProducto={opcionesProducto}
-                            />
-                        ))}
-                        <button
-                            type="button"
-                            className='flex flex-col justify-center items-center p-1 md:p-2 rounded-xl w-full bg-white hover:opacity-80 text-zinc-500'
-                            onClick={addOptionMain}
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                            </svg>
-                        </button>
-
-                    </div>
+                    {/* Contenedores de opciones */}
+                    <ContenedorOpciones
+                        opcionesProducto={opcionesProducto}
+                        setOpcionesProducto={setOpcionesProducto}
+                    />
+                    {/* Contenedores de opciones */}
 
                     <div className='flex flex-col w-full'>
                         <label htmlFor="descripcion">Descripcion: </label>

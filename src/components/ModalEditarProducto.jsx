@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Select, SelectItem } from "@nextui-org/react";
+import { Button, Select, SelectItem } from "@nextui-org/react";
 import { createRef } from "react";
 import Alerta from "./Alerta";
 import clienteAxios from '../config/axios';
@@ -8,10 +8,12 @@ import useAdmin from "../hooks/useAdmin";
 import { Card, Image, Textarea } from "@nextui-org/react";
 import BotonCarga from "./BotonCarga";
 import TipoSelect from "./admin/TipoSelect";
+import ContenedorOpciones from "./ContenedorOpciones";
+import MenosIcono from "./icons/MenosIcono";
 
 export default function ModalEditarProducto() {
     const token = localStorage.getItem("AUTH_TOKEN");
-    const { setModalEditarProducto, modalEditarProducto, productoEditar, handleClickEditarProducto, errorEdicionProducto, loadingIsEdit, setLoadingIsEdit } = useAdmin();
+    const { setModalEditarProducto, modalEditarProducto, productoEditar, setProductoEditar, handleClickEditarProducto, errorEdicionProducto, loadingIsEdit, setLoadingIsEdit } = useAdmin();
 
     const [nuevaImagenProducto, setNuevaImagenProducto] = useState([]);
     const [promociones, setPromociones] = useState([]);
@@ -19,6 +21,8 @@ export default function ModalEditarProducto() {
     const [selectedOption, setSelectedOption] = useState();
     const [imagenUrl, setImagenUrl] = useState(productoEditar.imagen);
     const [selectedKeys, setSelectedKeys] = useState(productoEditar.tipo_peso);
+    const [opcionesProducto, setOpcionesProducto] = useState([]);
+    const [loadingEliminarOpcion, setLoadingEliminarOpcion] = useState(false);
 
     const nombreRef = createRef();
     const descripcionRef = createRef();
@@ -30,7 +34,29 @@ export default function ModalEditarProducto() {
         setModalEditarProducto(!modalEditarProducto);
     }
 
-
+    // Función para eliminar un contenedor de opciones
+    const handleEliminarOpcion = async (contenedorId) => {
+        setLoadingEliminarOpcion(true);
+        try {
+            const response = await clienteAxios.delete(`/api/productos/${productoEditar.id}/contenedores`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                data: {
+                    contenedores_ids: [contenedorId], // Enviamos el ID del contenedor en un array
+                },
+            });
+            // Actualizar el estado local para eliminar el contenedor de opciones
+            setProductoEditar(prevState => ({
+                ...prevState,
+                opciones_producto: prevState.opciones_producto.filter(opcion => opcion.id !== contenedorId)
+            }));
+            setLoadingEliminarOpcion(false);
+        } catch (error) {
+            console.error("Error al eliminar el contenedor:", error);
+            setLoadingEliminarOpcion(false);
+        }
+    };
 
     //OBTENER TODAS LAS PROMOCIONES
     const obtenerPromociones = async () => {
@@ -116,6 +142,7 @@ export default function ModalEditarProducto() {
             precio: precioRef.current.value,
             imagen: nuevaImagenProducto,
             descripcion: descripcionRef.current.value,
+            opciones_producto: opcionesProducto,
             peso: pesoRef.current.value,
             tipo_peso: selectedKeys,
             promo_id: idPromocion?.id,
@@ -153,7 +180,7 @@ export default function ModalEditarProducto() {
                 </div>
                 <div className=" flex flex-col justify-center items-center mt-2">
                     <form
-                        className=" w-full"
+                        className=" space-y-3 w-full"
                         onSubmit={handleClickDatosEditadosProducto}
                         noValidate
                     >
@@ -236,6 +263,38 @@ export default function ModalEditarProducto() {
                                 </div>
                             </div>
                         </div>
+
+                        {/* Contenedores de opciones */}
+
+                        <div className="space-y-2">
+                            <h1>Contenedores de opciones</h1>
+                            {productoEditar.opciones_producto.map(opciones => (
+                                <div key={opciones.id} className="flex w-full justify-between items-center space-x-2 p-2 rounded-xl bg-zinc-800 text-white">
+                                    <p>{opciones?.nombre}</p>
+                                    <Button
+                                        isLoading={loadingEliminarOpcion}
+                                        isIconOnly
+                                        size="sm"
+                                        color='danger'
+                                        variant="flat"
+                                        id={'eliminarOpcion' + opciones?.id}
+                                        onClick={() => handleEliminarOpcion(opciones.id)} // Llama a la función de eliminar
+                                    >
+                                        {!loadingEliminarOpcion && <MenosIcono className="size-4" />}
+
+                                    </Button>
+                                </div>
+                            ))}
+                        </div>
+
+                        <ContenedorOpciones
+                            opcionesProducto={opcionesProducto}
+                            setOpcionesProducto={setOpcionesProducto}
+                            encabezado="Agregar contenedores de opciones"
+                            opcionesActuales={productoEditar?.opciones_producto}
+                            agregarContenedor={false}
+                        />
+                        {/* Contenedores de opciones */}
 
                         <div className="flex flex-col w-full justify-center items-center mt-2">
                             <label htmlFor="descripcion" className=" text-xl font-bold mb-1 ">Descripcion:</label>

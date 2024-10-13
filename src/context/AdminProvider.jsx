@@ -664,9 +664,9 @@ const AdminProvider = ({ children }) => {
                 socketConnection.emit("onCrearProducto", data);
                 socketConnection.emit("onRegistro", data.registro);
             } catch (error) {
+                setLoadingCrearProducto(false)
                 console.error(error)
                 setErrores(Object.values(error.response.data.errors))
-                setLoadingCrearProducto(false)
             }
         }
     }
@@ -687,6 +687,7 @@ const AdminProvider = ({ children }) => {
             socketConnection.emit("onActualizarProductos", res.data.producto);
             socketConnection.emit("onRegistro", res.data.registro);
         } catch (error) {
+            console.error(error)
             setErrorEdicionProducto(Object.values(error.response.data.errors))
         }
     };

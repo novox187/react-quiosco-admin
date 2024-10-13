@@ -29,7 +29,6 @@ const ImageUploader = ({ onImageChange, imgSrcDB }) => {
         e.preventDefault(); // Previene el comportamiento por defecto para permitir el drop
     };
 
-    console.log(imgSrcDB);
 
     const previewImage = (file) => {
         if (file) {
