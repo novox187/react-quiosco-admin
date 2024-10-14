@@ -3,6 +3,7 @@ import useAdmin from '../hooks/useAdmin';
 import ProductosAdmin from '../components/admin/ProductosAdmin';
 import { Button, Input } from '@nextui-org/react';
 import Usuario from '../components/Usuario';
+import OjoIcono from '../components/icons/OjoIcono';
 
 
 export default function Productos() {
@@ -36,7 +37,7 @@ export default function Productos() {
         )
     }
     return (
-        <div className='flex flex-col justify-center items-center pr-5 mb-40 pb-20'>
+        <div className='flex flex-col justify-center items-center pr-5 mb-40 pb-20 w-full'>
             <div className=" lg:w-full hidden lg:flex justify-end  lg:mr-10">
                 <Usuario />
             </div>
@@ -46,7 +47,7 @@ export default function Productos() {
             </p>
 
             <div className=" flex flex-col w-screen md:w-full justify-center items-center md:flex-row md:justify-between pb-5">
-                <div className='flex flex-col xs:flex-row justify-center items-center w-full md:w-auto'>
+                <div className='flex flex-col md:flex-row justify-center items-center w-full md:w-auto overflow-x-scroll'>
                     <Button
                         className=" bg-zinc-700 hover:bg-zinc-900 transition-colors px-3 text-white py-2.5 m-1"
                         onClick={() => setModalCrearPromo(!modalCrearPromo)}
@@ -70,6 +71,11 @@ export default function Productos() {
                     >
                         Producto
                     </Button>
+
+                    <Button
+                    className=" bg-zinc-700 hover:bg-zinc-900 px-3 text-white py-2.5 m-1 min-w-[10rem]"
+                    endContent={<OjoIcono className='size-4'/>}
+                    >Contenerodres opciones</Button>
                 </div>
                 <form
                     className="flex flex-row justify-center items-center w-full md:w-auto md:justify-end my-1 space-x-1"

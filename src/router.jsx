@@ -16,6 +16,7 @@ import Repartidor from './views/admin/Repartidor'
 import PedidoMapa from './components/admin/PedidoMapa'
 import Configuracion from './views/Config/Configuracion'
 import ConfiguracionesLayout from './layouts/ConfiguracionesLayout'
+import ContenedoresControler from './views/ContenedoresControler'
 const router = createBrowserRouter([
 
     {
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
                 element: <Productos />
             },
             {
+                path: '/admin/productos/contenedores',
+                element: <ContenedoresControler />
+            },
+            {
                 path: '/admin/categorias',
                 element: <Categorias />
             },
@@ -58,7 +63,6 @@ const router = createBrowserRouter([
                 path: '/admin/registro/:registroID',
                 element: <RegistroInforme />
             },
-
         ]
     },
     {
