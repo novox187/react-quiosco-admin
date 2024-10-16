@@ -41,7 +41,6 @@ export default function Configuracion() {
       email: negocio.email,
       ruc: negocio.ruc,
     }
-    console.log(negocioData)
     if (negocio.id) {
       await ActualizarNegocio(negocio.id, negocioData)
     } else {

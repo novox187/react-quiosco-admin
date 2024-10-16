@@ -407,6 +407,12 @@ const AdminProvider = ({ children }) => {
         socketConnection.on("onRegistro", (data) => {
             setNuevoRegistro(data);
         });
+        socketConnection.on("onCambiarEstadoContenedor", (data) => {
+            setNuevoRegistro(data);
+        });
+        socketConnection.on("onCambiarEstadoOpcion", (data) => {
+            setNuevoRegistro(data);
+        });
 
         return () => {
             socketConnection.off("onCrearProducto");
@@ -928,7 +934,6 @@ const AdminProvider = ({ children }) => {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-            console.log('Datos enviados:', response.data);
         } catch (error) {
             console.error('Error al enviar los datos:', error);
         }
