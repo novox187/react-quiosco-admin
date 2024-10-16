@@ -353,83 +353,40 @@ const AdminProvider = ({ children }) => {
         }
     }, [nuevoRegistro]);
 
-    /* funciones de websocket */
     useEffect(() => {
         if (!socketConnection) return;
-
-        socketConnection.on("onCrearProducto", (data) => {
-            setProductoNuevo(data.data);
+    
+        const socketEventHandlers = {
+            onCrearProducto: (data) => setProductoNuevo(data.data),
+            onActualizarProductos: (data) => setProductoActualizar(data),
+            onMoverProducto: (data) => setDatosProductoMover(data),
+            onEliminarProductos: (data) => setProductoAEliminar(data),
+            onDisponible: (data) => setProductoCambiarEstado(data),
+            onPedido: (data) => setPedidoActualizar(data),
+            onNuevoPedido: (data) => setNuevoPedido(data),
+            onEliminarPedido: (data) => setPedidoEliminar(data),
+            onEditarCategoria: (data) => setCategoriaActualizar(data),
+            onCrearCategoria: (data) => setCategoriaNueva(data),
+            onEliminarCategoria: (data) => setCategoriaEliminar(data),
+            onCaja: (data) => setNuevosDatosCaja(data.nuevaCaja),
+            onRegistro: (data) => setNuevoRegistro(data),
+            onCambiarEstadoContenedor: (data) => setNuevoRegistro(data),
+            onCambiarEstadoOpcion: (data) => setNuevoRegistro(data),
+        };
+    
+        // Registrar eventos de socket
+        Object.entries(socketEventHandlers).forEach(([event, handler]) => {
+            socketConnection.on(event, handler);
         });
-
-        socketConnection.on("onActualizarProductos", (data) => {
-            setProductoActualizar(data);
-        });
-
-        socketConnection.on("onMoverProducto", (data) => {
-            setDatosProductoMover(data);
-        });
-
-        socketConnection.on("onEliminarProductos", (data) => {
-            setProductoAEliminar(data)
-        });
-
-        socketConnection.on("onDisponible", (data) => {
-            setProductoCambiarEstado(data);
-        });
-
-        socketConnection.on('onPedido', (data) => {
-            setPedidoActualizar(data)
-        });
-
-        socketConnection.on('onNuevoPedido', (data) => {
-            setNuevoPedido(data)
-        });
-
-        socketConnection.on("onEliminarPedido", (data) => {
-            setPedidoEliminar(data)
-        });
-
-        socketConnection.on("onEditarCategoria", (data) => {
-            setCategoriaActualizar(data);
-        });
-
-        socketConnection.on("onCrearCategoria", (data) => {
-            setCategoriaNueva(data)
-        });
-
-        socketConnection.on("onEliminarCategoria", (data) => {
-            setCategoriaEliminar(data)
-        });
-
-        socketConnection.on("onCaja", (data) => {
-            setNuevosDatosCaja(data.nuevaCaja);
-        });
-        socketConnection.on("onRegistro", (data) => {
-            setNuevoRegistro(data);
-        });
-        socketConnection.on("onCambiarEstadoContenedor", (data) => {
-            setNuevoRegistro(data);
-        });
-        socketConnection.on("onCambiarEstadoOpcion", (data) => {
-            setNuevoRegistro(data);
-        });
-
+    
+        // Limpiar eventos de socket al desmontar
         return () => {
-            socketConnection.off("onCrearProducto");
-            socketConnection.off("onEliminarProductos");
-            socketConnection.off("onActualizarProductos");
-            socketConnection.off("onMoverProducto");
-            socketConnection.off("onDisponible");
-            socketConnection.off("onPedido");
-            socketConnection.off("onNuevoPedido");
-            socketConnection.off("onEliminarPedido");
-            socketConnection.off("onEditarCategoria");
-            socketConnection.off("onCrearCategoria");
-            socketConnection.off("onEliminarCategoria");
-            socketConnection.off("onCaja");
-            socketConnection.off("onRegistro");
+            Object.keys(socketEventHandlers).forEach((event) => {
+                socketConnection.off(event);
+            });
         };
     }, [socketConnection]);
+    
 
     /* MODELES */
     const handleClickModalCategoria = () => {
