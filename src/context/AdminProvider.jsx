@@ -650,6 +650,7 @@ const AdminProvider = ({ children }) => {
             socketConnection.emit("onActualizarProductos", res.data.producto);
             socketConnection.emit("onRegistro", res.data.registro);
         } catch (error) {
+            setLoadingIsEdit(false)
             console.error(error)
             setErrorEdicionProducto(Object.values(error.response.data.errors))
         }
