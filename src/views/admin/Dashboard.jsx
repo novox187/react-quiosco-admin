@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import Ingresos from "../../components/admin/dashboard/Ingresos"
 import GraficaEstadistica from '../../components/admin/dashboard/GraficaEstadistica'
-import { Card } from '@nextui-org/react'
+import { Card, ScrollShadow } from '@nextui-org/react'
 import TablaProductosTop from '../../components/admin/dashboard/TablaProductosTop'
 import TablaUsuarios from '../../components/admin/dashboard/TablaUsuarios'
 import TablaEquipoTrabajo from '../../components/admin/dashboard/TablaEquipoTrabajo'
@@ -42,12 +42,12 @@ export default function Dashboard() {
       <div className=" lg:w-full hidden lg:flex justify-end  lg:mr-10">
         <Usuario />
       </div>
-      <div className={`flex flex-row  space-x-3 overflow-auto w-[95%] z-0`}>
+      <ScrollShadow orientation='horizontal' className={`flex flex-row  space-x-3 overflow-auto w-[95%] z-0`}>
         <Ingresos datos={datosPanel?.ingresoHoy} />
         <Ingresos datos={datosPanel?.ingresoMes} />
         <Ingresos datos={datosPanel?.usuariosMes} />
         <Caja datos={datosPanel?.ingresoHoy} />
-      </div>
+      </ScrollShadow>
       <div className='flex flex-col md:flex-row justify-center md:space-x-3 space-y-3 md:space-y-0 w-[95%]'>
         <Card className='md:w-[50%] flex flex-col justify-center'>
         <h1 className=" ml-5 mt-4 text-center text-zinc-400 md:text-start font-bold uppercase">5 mas vendidos en el mes</h1>
