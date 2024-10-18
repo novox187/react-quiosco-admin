@@ -18,6 +18,11 @@ import {
   Pagination,
 } from "@nextui-org/react";
 import { columns, statusOptions } from "../../../data/data2";
+import MasIcono from "../../icons/MasIcono";
+import OpcionesIcono from "../../icons/OpcionesIcono";
+import OjoIcono from "../../icons/OjoIcono";
+import EditarIcon from "../../icons/EditarIcon";
+import EliminarIcon from "../../icons/EliminarIcon";
 
 const statusColorMap = {
   activo: "success",
@@ -25,7 +30,7 @@ const statusColorMap = {
   vacaciones: "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "calificacion", "status"];
+const INITIAL_VISIBLE_COLUMNS = ["name", "calificacion", "status", "actions"];
 
 export default function TablaUsuarios() {
   const [users, setUsers] = useState([])
@@ -132,7 +137,7 @@ export default function TablaUsuarios() {
       case "name":
         return (
           <User
-            avatarProps={{ radius: "lg", src: user.avatar }}
+            avatarProps={{ radius: "full", src: "https://res.cloudinary.com/dfrsffngq/image/upload/v1723750593/UserDefault.png" }}
             description={user.email}
             name={cellValue}
           >
@@ -152,6 +157,23 @@ export default function TablaUsuarios() {
           <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
             {cellValue}
           </Chip>
+        );
+      case "actions":
+        return (
+          <div className="relative flex justify-end items-center gap-2">
+            <Dropdown>
+              <DropdownTrigger>
+                <Button isIconOnly size="sm" variant="light">
+                  <OpcionesIcono className="size-6" />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu>
+                <DropdownItem endContent={<OjoIcono className="size-4" />} variant="flat">Ver</DropdownItem>
+                <DropdownItem endContent={<EditarIcon className="size-4" />} variant="flat">Editar</DropdownItem>
+                <DropdownItem endContent={<EliminarIcon className="size-4" />} color="danger" variant="flat">Eliminar</DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </div>
         );
       default:
         return cellValue;
@@ -233,6 +255,11 @@ export default function TablaUsuarios() {
                 ))}
               </DropdownMenu>
             </Dropdown>
+            <Dropdown>
+              <Button endContent={<MasIcono className="size-5" />} variant="flat">
+                Nuevo
+              </Button>
+            </Dropdown>
           </div>
         </div>
         <div className="flex justify-between items-center">
@@ -285,8 +312,8 @@ export default function TablaUsuarios() {
       bottomContentPlacement="outside"
       classNames={{
         wrapper: "max-h-[432px]",
-    }}
-    className="flex justify-between p-2 h-full"
+      }}
+      className="flex justify-between p-2 h-full"
       sortDescriptor={sortDescriptor}
       topContent={topContent}
       topContentPlacement="outside"

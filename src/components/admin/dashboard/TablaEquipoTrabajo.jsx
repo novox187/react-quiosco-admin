@@ -18,6 +18,11 @@ import {
     Pagination,
 } from "@nextui-org/react";
 import { columns, statusOptions } from "../../../data/data";
+import MasIcono from "../../icons/MasIcono";
+import OpcionesIcono from "../../icons/OpcionesIcono";
+import OjoIcono from "../../icons/OjoIcono";
+import EditarIcon from "../../icons/EditarIcon";
+import EliminarIcon from "../../icons/EliminarIcon";
 
 const statusColorMap = {
     activo: "success",
@@ -25,7 +30,7 @@ const statusColorMap = {
     despedido: "danger",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status"];
+const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
 
 export default function TablaEquipoTrabajo() {
 
@@ -42,6 +47,7 @@ export default function TablaEquipoTrabajo() {
                 },
             });
             setUsers(data)
+            console.log(data)
         } catch (error) {
             console.error(error);
         }
@@ -116,7 +122,7 @@ export default function TablaEquipoTrabajo() {
             case "name":
                 return (
                     <User
-                        avatarProps={{ radius: "lg", src: user.avatar }}
+                        avatarProps={{ radius: 'full', src: "https://res.cloudinary.com/dfrsffngq/image/upload/v1723750593/UserDefault.png" }}
                         description={user.email}
                         name={cellValue}
                     >
@@ -127,14 +133,31 @@ export default function TablaEquipoTrabajo() {
                 return (
                     <div className="flex flex-col">
                         <p className="text-bold text-small capitalize">{cellValue}</p>
-                        <p className="text-bold text-tiny capitalize text-default-400">{user.team}</p>
+                        <p className="text-bold text-tiny capitalize text-default-400">{user.rol}</p>
                     </div>
                 );
             case "status":
                 return (
-                    <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
-                        {cellValue}
+                    <Chip className="capitalize" color={statusColorMap[user.status == 1 ? 'activo' : user.status == 2 ? 'vacaciones' : 'despedido']} size="sm" variant="flat">
+                        {cellValue == 1 ? 'Activo' : cellValue == 2 ? 'Vacaciones' : 'Despedido'}
                     </Chip>
+                );
+            case "actions":
+                return (
+                    <div className="relative flex justify-end items-center gap-2">
+                        <Dropdown>
+                            <DropdownTrigger>
+                                <Button isIconOnly size="sm" variant="light">
+                                    <OpcionesIcono className="size-6"/>
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu>
+                                <DropdownItem endContent={<OjoIcono className="size-4"/>} variant="flat">Ver</DropdownItem>
+                                <DropdownItem endContent={<EditarIcon className="size-4"/>} variant="flat">Editar</DropdownItem>
+                                <DropdownItem endContent={<EliminarIcon className="size-4"/>} color="danger" variant="flat">Eliminar</DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </div>
                 );
             default:
                 return cellValue;
@@ -215,6 +238,11 @@ export default function TablaEquipoTrabajo() {
                                     </DropdownItem>
                                 ))}
                             </DropdownMenu>
+                        </Dropdown>
+                        <Dropdown>
+                            <Button endContent={<MasIcono  className="size-5"/>} variant="flat">
+                                Nuevo
+                            </Button>
                         </Dropdown>
                     </div>
                 </div>
