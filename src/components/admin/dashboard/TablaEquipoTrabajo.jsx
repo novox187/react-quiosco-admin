@@ -18,11 +18,12 @@ import {
     Pagination,
 } from "@nextui-org/react";
 import { columns, statusOptions } from "../../../data/data";
-import MasIcono from "../../icons/MasIcono";
 import OpcionesIcono from "../../icons/OpcionesIcono";
 import OjoIcono from "../../icons/OjoIcono";
 import EditarIcon from "../../icons/EditarIcon";
 import EliminarIcon from "../../icons/EliminarIcon";
+import ModalNuevoTrabajador from "./ModalNuevoTrabajador";
+import useAdmin from "../../../hooks/useAdmin";
 
 const statusColorMap = {
     activo: "success",
@@ -34,7 +35,8 @@ const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
 
 export default function TablaEquipoTrabajo() {
 
-    const [users, setUsers] = useState([]);
+    const { setEmployes, employes } = useAdmin();
+    console.log(employes)
 
     const token = localStorage.getItem("AUTH_TOKEN");
 
@@ -46,7 +48,7 @@ export default function TablaEquipoTrabajo() {
                     'Content-Type': 'multipart/form-data'
                 },
             });
-            setUsers(data)
+            setEmployes(data)
         } catch (error) {
             console.error(error);
         }
@@ -79,7 +81,7 @@ export default function TablaEquipoTrabajo() {
     }, [visibleColumns]);
 
     const filteredItems = React.useMemo(() => {
-        let filteredUsers = [...users];
+        let filteredUsers = [...employes];
 
         if (hasSearchFilter) {
             filteredUsers = filteredUsers.filter((user) =>
@@ -93,7 +95,7 @@ export default function TablaEquipoTrabajo() {
         }
 
         return filteredUsers;
-    }, [users, filterValue, statusFilter]);
+    }, [employes, filterValue, statusFilter]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -147,13 +149,13 @@ export default function TablaEquipoTrabajo() {
                         <Dropdown>
                             <DropdownTrigger>
                                 <Button isIconOnly size="sm" variant="light">
-                                    <OpcionesIcono className="size-6"/>
+                                    <OpcionesIcono className="size-6" />
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
-                                <DropdownItem endContent={<OjoIcono className="size-4"/>} variant="flat">Ver</DropdownItem>
-                                <DropdownItem endContent={<EditarIcon className="size-4"/>} variant="flat">Editar</DropdownItem>
-                                <DropdownItem endContent={<EliminarIcon className="size-4"/>} color="danger" variant="flat">Eliminar</DropdownItem>
+                                <DropdownItem endContent={<OjoIcono className="size-4" />} variant="flat">Ver</DropdownItem>
+                                <DropdownItem endContent={<EditarIcon className="size-4" />} variant="flat">Editar</DropdownItem>
+                                <DropdownItem endContent={<EliminarIcon className="size-4" />} color="danger" variant="flat">Eliminar</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -239,14 +241,12 @@ export default function TablaEquipoTrabajo() {
                             </DropdownMenu>
                         </Dropdown>
                         <Dropdown>
-                            <Button endContent={<MasIcono  className="size-5"/>} variant="flat">
-                                Nuevo
-                            </Button>
+                        <ModalNuevoTrabajador />
                         </Dropdown>
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-default-400 text-small">Total {users.length} usuarios</span>
+                    <span className="text-default-400 text-small">Total {employes.length} usuarios</span>
                     <label className="flex items-center text-default-400 text-small">
                         Fila de página:
                         <select
@@ -266,7 +266,7 @@ export default function TablaEquipoTrabajo() {
         statusFilter,
         visibleColumns,
         onRowsPerPageChange,
-        users.length,
+        employes.length,
         onSearchChange,
         hasSearchFilter,
     ]);
@@ -288,40 +288,43 @@ export default function TablaEquipoTrabajo() {
     }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
 
     return (
-        <Table
-            aria-label="Tabla de equipo de trabajo"
-            isHeaderSticky
-            bottomContent={bottomContent}
-            bottomContentPlacement="outside"
-            classNames={{
-                wrapper: "max-h-[432px]",
-            }}
-            className="flex justify-between p-2 h-full"
+        <>
+            <Table
+                aria-label="Tabla de equipo de trabajo"
+                isHeaderSticky
+                bottomContent={bottomContent}
+                bottomContentPlacement="outside"
+                classNames={{
+                    wrapper: "max-h-[432px]",
+                }}
+                className="flex justify-between p-2 h-full"
 
-            sortDescriptor={sortDescriptor}
-            topContent={topContent}
-            topContentPlacement="outside"
-            onSelectionChange={setSelectedKeys}
-            onSortChange={setSortDescriptor}
-        >
-            <TableHeader columns={headerColumns}>
-                {(column) => (
-                    <TableColumn
-                        key={column.uid}
-                        align={column.uid === "actions" ? "center" : "start"}
-                        allowsSorting={column.sortable}
-                    >
-                        {column.name}
-                    </TableColumn>
-                )}
-            </TableHeader>
-            <TableBody emptyContent={"No hay usuarios"} items={sortedItems}>
-                {(item) => (
-                    <TableRow key={item.id}>
-                        {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-                    </TableRow>
-                )}
-            </TableBody>
-        </Table>
+                sortDescriptor={sortDescriptor}
+                topContent={topContent}
+                topContentPlacement="outside"
+                onSelectionChange={setSelectedKeys}
+                onSortChange={setSortDescriptor}
+            >
+                <TableHeader columns={headerColumns}>
+                    {(column) => (
+                        <TableColumn
+                            key={column.uid}
+                            align={column.uid === "actions" ? "center" : "start"}
+                            allowsSorting={column.sortable}
+                        >
+                            {column.name}
+                        </TableColumn>
+                    )}
+                </TableHeader>
+                <TableBody emptyContent={"No hay usuarios"} items={sortedItems}>
+                    {(item) => (
+                        <TableRow key={item.id}>
+                            {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+                        </TableRow>
+                    )}
+                </TableBody>
+            </Table>
+            
+        </>
     );
 }

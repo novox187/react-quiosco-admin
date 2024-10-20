@@ -127,10 +127,15 @@ const AdminProvider = ({ children }) => {
     const [loadingConfirmarPedidoModal, setLoadingConfirmarPedidoModal] = useState(false);
     const { isOpen: isOpenDireccionEntrega, onOpen: onOpenDireccionEntrega, onOpenChange: onOpenChangeDireccionEntrega } = useDisclosure();
     const { isOpen: isOpenConfirmarCancelarEntrega, onOpen: onOpenConfirmarCancelarEntrega, onOpenChange: onOpenChangeConfirmarCancelarEntrega } = useDisclosure();
+    const { isOpen: isOpenCrearEmployee, onOpen: onOpenCrearEmployee, onOpenChange: onOpenChangeCrearEmployee, onClose: onCloseCrearEmployee } = useDisclosure();
 
     const [pedidoEnCurso, setPedidoEnCurso] = useState(null);
     const [loadingCancelarPedido, setLoadingCancelarPedido] = useState(false);
     const [loadingFinalizarPedido, setLoadingFinalizarPedido] = useState(false);
+
+    /* EMPLEADOS */
+    const [employes, setEmployes] = useState([]);
+    const [nuevoEmployee, setNuevoEmployee] = useState(null);
 
     /* CONFIGURACIOES */
     const [loadingUpdateConfig, setLoadingUpdateConfig] = useState(false);
@@ -353,9 +358,17 @@ const AdminProvider = ({ children }) => {
         }
     }, [nuevoRegistro]);
 
+    /* AGREGAR EMPLOYEE */
+    useEffect(() => {
+        if (nuevoEmployee && Object.keys(nuevoEmployee).length > 0) {
+            setEmployes(prevEmployes => [nuevoEmployee, ...prevEmployes]);
+        }
+    }, [nuevoEmployee]);
+
+
     useEffect(() => {
         if (!socketConnection) return;
-    
+
         const socketEventHandlers = {
             onCrearProducto: (data) => setProductoNuevo(data.data),
             onActualizarProductos: (data) => setProductoActualizar(data),
@@ -372,13 +385,14 @@ const AdminProvider = ({ children }) => {
             onRegistro: (data) => setNuevoRegistro(data),
             onCambiarEstadoContenedor: (data) => setNuevoRegistro(data),
             onCambiarEstadoOpcion: (data) => setNuevoRegistro(data),
+            onCrearEmployee: (data) => setNuevoEmployee(data),
         };
-    
+
         // Registrar eventos de socket
         Object.entries(socketEventHandlers).forEach(([event, handler]) => {
             socketConnection.on(event, handler);
         });
-    
+
         // Limpiar eventos de socket al desmontar
         return () => {
             Object.keys(socketEventHandlers).forEach((event) => {
@@ -386,7 +400,7 @@ const AdminProvider = ({ children }) => {
             });
         };
     }, [socketConnection]);
-    
+
 
     /* MODELES */
     const handleClickModalCategoria = () => {
@@ -1072,7 +1086,13 @@ const AdminProvider = ({ children }) => {
                 CrearNegocio,
                 ActualizarNegocio,
                 obtenerNegocio,
-                loadingUpdateConfig
+                loadingUpdateConfig,
+                isOpenCrearEmployee,
+                onOpenCrearEmployee,
+                onOpenChangeCrearEmployee,
+                onCloseCrearEmployee,
+                setEmployes,
+                employes,
             }}
         >
             {children}

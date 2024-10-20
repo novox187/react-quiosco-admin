@@ -21,7 +21,7 @@ export const useAuth = ({ middleware, url }) => {
     userActual,
   } = useGeneralContext();
 
-  const { pedidoEnCurso } = useAdmin();
+  const { pedidoEnCurso,onCloseCrearEmployee, socketConnection } = useAdmin();
 
   const token = localStorage.getItem("AUTH_TOKEN");
 
@@ -75,21 +75,16 @@ export const useAuth = ({ middleware, url }) => {
           "/api/employee/register",
           datos
         );
-        localStorage.setItem("AUTH_TOKEN", data.token);
+        socketConnection.emit("onCrearEmployee", data.employee);
         setErrores([]);
-        toast.success(
-          `Bienvenido ${data?.employee?.first_name} ${data?.employee?.last_name}`
-        );
-        setUserActual(data.employee);
         await mutate();
-        localStorage.setItem("USER", datos.email);
-        setModalAuth(!modalAuth);
-        setUserActivo(true);
         setLoadingRegistro(false);
-        setRedirected(false); // Reiniciar el estado de redirección
+        onCloseCrearEmployee();
       } catch (error) {
-        setErrores(Object.values(error.response.data.errors));
+        console.log(error)
         setLoadingRegistro(false);
+        setErrores(Object.values(error.response.data.errors));
+        toast.error('algo salio mal')
       }
     },
     [modalAuth, mutate, setModalAuth, setUserActual, setUserActivo]

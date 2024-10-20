@@ -5,7 +5,7 @@ export default function BotonCarga({loading,texto}) {
     return (
         <Button
             type="submit"
-            className='bg-cuarto text-tercero w-full mt-5 p-5 uppercase font-bold cursor-pointer'
+            className=' w-full mt-5 p-5 uppercase font-bold cursor-pointer'
             isDisabled={loading}
         >
             {loading ? (
