@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import clienteAxios from "../../../config/axios";
 import {
     Table,
@@ -21,9 +21,10 @@ import { columns, statusOptions } from "../../../data/data";
 import OpcionesIcono from "../../icons/OpcionesIcono";
 import OjoIcono from "../../icons/OjoIcono";
 import EditarIcon from "../../icons/EditarIcon";
-import EliminarIcon from "../../icons/EliminarIcon";
 import ModalNuevoTrabajador from "./ModalNuevoTrabajador";
 import useAdmin from "../../../hooks/useAdmin";
+import ModalVerEmployee from "./ModalVerEmployee";
+import ModalEditarEmployee from "./ModalEditarEmloyee";
 
 const statusColorMap = {
     activo: "success",
@@ -34,9 +35,7 @@ const statusColorMap = {
 const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
 
 export default function TablaEquipoTrabajo() {
-
-    const { setEmployes, employes } = useAdmin();
-    console.log(employes)
+    const { setEmployes, employes, onOpenVerEmployee, onOpenEditarEmployee, setEmployeeVer } = useAdmin();
 
     const token = localStorage.getItem("AUTH_TOKEN");
 
@@ -61,26 +60,26 @@ export default function TablaEquipoTrabajo() {
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
-    const [filterValue, setFilterValue] = React.useState("");
-    const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
-    const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
-    const [statusFilter, setStatusFilter] = React.useState("all");
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    const [sortDescriptor, setSortDescriptor] = React.useState({
+    const [filterValue, setFilterValue] = useState("");
+    const [selectedKeys, setSelectedKeys] = useState(new Set([]));
+    const [visibleColumns, setVisibleColumns] = useState(new Set(INITIAL_VISIBLE_COLUMNS));
+    const [statusFilter, setStatusFilter] = useState("all");
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [sortDescriptor, setSortDescriptor] = useState({
         column: "age",
         direction: "ascending",
     });
-    const [page, setPage] = React.useState(1);
+    const [page, setPage] = useState(1);
 
     const hasSearchFilter = Boolean(filterValue);
 
-    const headerColumns = React.useMemo(() => {
+    const headerColumns = useMemo(() => {
         if (visibleColumns === "all") return columns;
 
         return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
     }, [visibleColumns]);
 
-    const filteredItems = React.useMemo(() => {
+    const filteredItems = useMemo(() => {
         let filteredUsers = [...employes];
 
         if (hasSearchFilter) {
@@ -99,14 +98,14 @@ export default function TablaEquipoTrabajo() {
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
-    const items = React.useMemo(() => {
+    const items = useMemo(() => {
         const start = (page - 1) * rowsPerPage;
         const end = start + rowsPerPage;
 
         return filteredItems.slice(start, end);
     }, [page, filteredItems, rowsPerPage]);
 
-    const sortedItems = React.useMemo(() => {
+    const sortedItems = useMemo(() => {
         return [...items].sort((a, b) => {
             const first = a[sortDescriptor.column];
             const second = b[sortDescriptor.column];
@@ -116,9 +115,8 @@ export default function TablaEquipoTrabajo() {
         });
     }, [sortDescriptor, items]);
 
-    const renderCell = React.useCallback((user, columnKey) => {
+    const renderCell = useCallback((user, columnKey) => {
         const cellValue = user[columnKey];
-
         switch (columnKey) {
             case "name":
                 return (
@@ -139,8 +137,8 @@ export default function TablaEquipoTrabajo() {
                 );
             case "status":
                 return (
-                    <Chip className="capitalize" color={statusColorMap[user.status == 1 ? 'activo' : user.status == 2 ? 'vacaciones' : 'despedido']} size="sm" variant="flat">
-                        {cellValue == 1 ? 'Activo' : cellValue == 2 ? 'Vacaciones' : 'Despedido'}
+                    <Chip className="capitalize" color={statusColorMap[user.status == 1 ? 'activo' : user.status == 0 ? 'vacaciones' : 'despedido']} size="sm" variant="flat">
+                        {cellValue == 1 ? 'Activo' : cellValue == 0 ? 'vacaciones' : 'Despedido'}
                     </Chip>
                 );
             case "actions":
@@ -153,9 +151,8 @@ export default function TablaEquipoTrabajo() {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
-                                <DropdownItem endContent={<OjoIcono className="size-4" />} variant="flat">Ver</DropdownItem>
-                                <DropdownItem endContent={<EditarIcon className="size-4" />} variant="flat">Editar</DropdownItem>
-                                <DropdownItem endContent={<EliminarIcon className="size-4" />} color="danger" variant="flat">Eliminar</DropdownItem>
+                                <DropdownItem onPress={() => { onOpenVerEmployee(); setEmployeeVer({ 'id': user.id }); }} variant="flat" endContent={<OjoIcono className="size-4" />}>Ver</DropdownItem>
+                                <DropdownItem onPress={() => { onOpenEditarEmployee(); setEmployeeVer({ 'id': user.id }); }} endContent={<EditarIcon className="size-4" />} variant="flat">Editar</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -163,26 +160,26 @@ export default function TablaEquipoTrabajo() {
             default:
                 return cellValue;
         }
-    }, []);
+    }, [onOpenVerEmployee]);
 
-    const onNextPage = React.useCallback(() => {
+    const onNextPage = useCallback(() => {
         if (page < pages) {
             setPage(page + 1);
         }
     }, [page, pages]);
 
-    const onPreviousPage = React.useCallback(() => {
+    const onPreviousPage = useCallback(() => {
         if (page > 1) {
             setPage(page - 1);
         }
     }, [page]);
 
-    const onRowsPerPageChange = React.useCallback((e) => {
+    const onRowsPerPageChange = useCallback((e) => {
         setRowsPerPage(Number(e.target.value));
         setPage(1);
     }, []);
 
-    const onSearchChange = React.useCallback((value) => {
+    const onSearchChange = useCallback((value) => {
         if (value) {
             setFilterValue(value);
             setPage(1);
@@ -191,19 +188,19 @@ export default function TablaEquipoTrabajo() {
         }
     }, []);
 
-    const onClear = React.useCallback(() => {
+    const onClear = useCallback(() => {
         setFilterValue("")
         setPage(1)
     }, [])
 
-    const topContent = React.useMemo(() => {
+    const topContent = useMemo(() => {
         return (
             <div className="flex flex-col gap-4">
                 <div className="flex justify-between gap-3 items-end">
                     <Input
                         isClearable
                         className="w-full sm:max-w-[44%]"
-                        placeholder="Bucar por nombre..."
+                        placeholder="Buscar por nombre..."
                         startContent={
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
@@ -241,7 +238,7 @@ export default function TablaEquipoTrabajo() {
                             </DropdownMenu>
                         </Dropdown>
                         <Dropdown>
-                        <ModalNuevoTrabajador />
+                            <ModalNuevoTrabajador />
                         </Dropdown>
                     </div>
                 </div>
@@ -271,7 +268,7 @@ export default function TablaEquipoTrabajo() {
         hasSearchFilter,
     ]);
 
-    const bottomContent = React.useMemo(() => {
+    const bottomContent = useMemo(() => {
         return (
             <div className="py-2 px-2 flex justify-center items-center z-0">
                 <Pagination
@@ -298,7 +295,6 @@ export default function TablaEquipoTrabajo() {
                     wrapper: "max-h-[432px]",
                 }}
                 className="flex justify-between p-2 h-full"
-
                 sortDescriptor={sortDescriptor}
                 topContent={topContent}
                 topContentPlacement="outside"
@@ -324,7 +320,8 @@ export default function TablaEquipoTrabajo() {
                     )}
                 </TableBody>
             </Table>
-            
+            <ModalVerEmployee />
+            <ModalEditarEmployee />
         </>
     );
 }

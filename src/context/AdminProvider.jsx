@@ -2,7 +2,6 @@ import { createContext, useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import clienteAxios from "../config/axios";
 import socketio from "socket.io-client";
-import axios from "axios";
 import Cookies from "js-cookie";
 import { useDisclosure } from "@nextui-org/react";
 const AdminContext = createContext();
@@ -127,7 +126,6 @@ const AdminProvider = ({ children }) => {
     const [loadingConfirmarPedidoModal, setLoadingConfirmarPedidoModal] = useState(false);
     const { isOpen: isOpenDireccionEntrega, onOpen: onOpenDireccionEntrega, onOpenChange: onOpenChangeDireccionEntrega } = useDisclosure();
     const { isOpen: isOpenConfirmarCancelarEntrega, onOpen: onOpenConfirmarCancelarEntrega, onOpenChange: onOpenChangeConfirmarCancelarEntrega } = useDisclosure();
-    const { isOpen: isOpenCrearEmployee, onOpen: onOpenCrearEmployee, onOpenChange: onOpenChangeCrearEmployee, onClose: onCloseCrearEmployee } = useDisclosure();
 
     const [pedidoEnCurso, setPedidoEnCurso] = useState(null);
     const [loadingCancelarPedido, setLoadingCancelarPedido] = useState(false);
@@ -136,6 +134,11 @@ const AdminProvider = ({ children }) => {
     /* EMPLEADOS */
     const [employes, setEmployes] = useState([]);
     const [nuevoEmployee, setNuevoEmployee] = useState(null);
+    const [employeeEditado, setEmployeeEditado] = useState(null);
+    const { isOpen: isOpenCrearEmployee, onOpen: onOpenCrearEmployee, onOpenChange: onOpenChangeCrearEmployee, onClose: onCloseCrearEmployee } = useDisclosure();
+    const { isOpen: isOpenVerEmployee, onOpen: onOpenVerEmployee, onOpenChange: onOpenChangeVerEmployee, onClose: onCloseVerEmployee } = useDisclosure();
+    const { isOpen: isOpenEditarEmployee, onOpen: onOpenEditarEmployee, onOpenChange: onOpenChangeEditarEmployee, onClose: onCloseEditarEmployee } = useDisclosure();
+    const [employeeVer, setEmployeeVer] = useState([]);
 
     /* CONFIGURACIOES */
     const [loadingUpdateConfig, setLoadingUpdateConfig] = useState(false);
@@ -308,7 +311,7 @@ const AdminProvider = ({ children }) => {
         }
     }, [productoAEliminar]);
 
-    /* Crear nueva categoria */
+    /* Ver nueva categoria */
     useEffect(() => {
         if (categoriasProductos && categoriaNueva && categorias) {
 
@@ -365,6 +368,13 @@ const AdminProvider = ({ children }) => {
         }
     }, [nuevoEmployee]);
 
+    /* Editar EMPLOYEE */
+    useEffect(() => {
+        if (employeeEditado) {
+            setEmployes(prevEmployes => prevEmployes.map(emp => emp.id === employeeEditado.id ? employeeEditado : emp));
+        }
+    }, [employeeEditado]);
+
 
     useEffect(() => {
         if (!socketConnection) return;
@@ -386,6 +396,7 @@ const AdminProvider = ({ children }) => {
             onCambiarEstadoContenedor: (data) => setNuevoRegistro(data),
             onCambiarEstadoOpcion: (data) => setNuevoRegistro(data),
             onCrearEmployee: (data) => setNuevoEmployee(data),
+            onEditarEmployee: (data) => setEmployeeEditado(data),
         };
 
         // Registrar eventos de socket
@@ -1093,6 +1104,16 @@ const AdminProvider = ({ children }) => {
                 onCloseCrearEmployee,
                 setEmployes,
                 employes,
+                isOpenVerEmployee,
+                onOpenVerEmployee,
+                onOpenChangeVerEmployee,
+                onCloseVerEmployee,
+                setEmployeeVer,
+                employeeVer,
+                isOpenEditarEmployee,
+                onOpenEditarEmployee,
+                onOpenChangeEditarEmployee,
+                onCloseEditarEmployee,
             }}
         >
             {children}
