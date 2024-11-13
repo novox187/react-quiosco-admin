@@ -84,10 +84,10 @@ export default function ModalDetallesPedidoEntrega({ isOpen, onOpenChange }) {
                                 <p className='text-lg font-bold '>
                                     Cliente: {''}
                                     <div className=' flex space-x-1'>
-                                        <span className='font-normal text-white'>{pedidoEnCurso.user.name}</span>
+                                        <span className='font-normal text-white'>{pedidoEnCurso?.user?.name}</span>
                                     </div>
                                     <span className="flex">
-                                        {generarEstrellas(pedidoEnCurso.user.calificacion)}
+                                        {generarEstrellas(pedidoEnCurso?.user?.calificacion)}
                                     </span>
                                 </p>
                             </div>

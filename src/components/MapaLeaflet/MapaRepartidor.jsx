@@ -4,6 +4,30 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Chip } from '@nextui-org/react';
 
+const iconoRepartidor = new L.Icon({
+    iconUrl: 'https://res.cloudinary.com/dfrsffngq/image/upload/v1728069312/delivery.png',
+    iconSize: [55, 60],
+    iconAnchor: [30, 30],
+    popupAnchor: [10, -30],
+    shadowSize: [41, 41]
+});
+
+const iconoQuiosco = new L.Icon({
+    iconUrl: 'https://res.cloudinary.com/dfrsffngq/image/upload/v1728069312/local.png',
+    iconSize: [35, 41],
+    iconAnchor: [30, 30],
+    popupAnchor: [10, -30],
+    shadowSize: [41, 41]
+});
+
+const iconoPuntoEntrega = new L.Icon({
+    iconUrl: 'https://res.cloudinary.com/dfrsffngq/image/upload/v1722370255/lk0b4yik69c9flh6k9xn.png',
+    iconSize: [30, 40],
+    iconAnchor: [15, 35],
+    popupAnchor: [10, -30],
+    shadowSize: [41, 41]
+});
+
 function RouteCalculator({ start, end }) {
     const [route, setRoute] = useState(null);
     const [duration, setDuration] = useState(null);
@@ -23,6 +47,7 @@ function RouteCalculator({ start, end }) {
 
         calculateRoute();
     }, [start, end]);
+
 
     return route ? (
         <>
@@ -71,19 +96,19 @@ export default function MapaRepartidor({positions}) {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
 
-            <Marker position={positions[0]}>
-                <Popup>
+            <Marker position={positions[0]} icon={iconoRepartidor}>
+                <Popup >
                     Punto A
                 </Popup>
             </Marker>
 
-            <Marker position={positions[1]}>
+            <Marker position={positions[1]} icon={iconoPuntoEntrega}>
                 <Popup>
                     Punto B
                 </Popup>
             </Marker>
 
-            <Marker position={[-0.47105781780871325, -76.98323627116352]}>
+            <Marker position={[-0.47105781780871325, -76.98323627116352]} icon={iconoQuiosco}>
                 <Popup>
                     Local Secos y Bolones
                 </Popup>

@@ -71,7 +71,7 @@ export default function PedidoMapa() {
 
     const handleClickFinalizarPedido = async () => {
         setLoadingFinalizarPedido(true);
-        finalizarPedido(pedidoEnCurso?.id);
+        await finalizarPedido(pedidoEnCurso?.id);
     };
 
     return (

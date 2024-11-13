@@ -872,6 +872,7 @@ const AdminProvider = ({ children }) => {
             Cookies.set("pedidoEnCurso", JSON.stringify(data.data), { expires: 2 });
         } catch (error) {
             console.error(error);
+            toast.error(error.response.data.errors.pedido[0])
         }
     };
 
@@ -901,10 +902,10 @@ const AdminProvider = ({ children }) => {
                     'Content-Type': 'multipart/form-data'
                 },
             });
+            setLoadingFinalizarPedido(false);
+            window.location.reload();
             setPedidoEnCurso(null);
             Cookies.remove('pedidoEnCurso');
-            window.location.reload();
-            setLoadingFinalizarPedido(false);
         } catch (error) {
             console.error(error);
             setLoadingFinalizarPedido(false);

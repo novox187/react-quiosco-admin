@@ -124,6 +124,7 @@ export const useAuth = ({ middleware, url }) => {
       } else {
         // Redirigir según el rol
         switch (userActual.rol) {
+
           case "admin":
             // Permitir acceso a cualquier ruta excepto a /admin/repartidor
             if (
@@ -134,18 +135,19 @@ export const useAuth = ({ middleware, url }) => {
               setRedirected(true); // Permitir acceso a otras rutas
             }
             break;
-          case "repartidor":
-            if (pedidoEnCurso?.numero_pedido) {
-              // Si hay un pedido en curso, redirigir a la página del pedido
-              navigate(
-                `/admin/repartidor/pedido/${pedidoEnCurso.numero_pedido}`
-              );
-            } else {
-              // Si no hay pedido en curso, redirigir a la página de repartidor
-              navigate("/admin/repartidor");
-            }
-            setRedirected(true);
-            break;
+            case "repartidor":
+              if (pedidoEnCurso?.numero_pedido) {
+                // Si hay un pedido en curso, redirigir a la página del pedido
+                navigate(
+                  `/admin/repartidor/pedido/${pedidoEnCurso.numero_pedido}`
+                );
+              } else {
+                // Si no hay pedido en curso, redirigir a la página de repartidor
+                navigate("/admin/repartidor");
+              }
+              setRedirected(true);
+              break;
+
           default:
             navigate("/"); // En caso de que el rol no sea reconocido
             break;
