@@ -1,11 +1,12 @@
 import React from "react";
 
-function CajaIcono({ size = 262, color = '#ffffff' }) {
+function CajaIcono({ size = 262, color = '#ffffff' , className }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width={size}
       height={size}
+      className={className}
       fillRule="evenodd"
       clipRule="evenodd"
       viewBox="0 0 262 262"
@@ -109,6 +110,7 @@ function CajaIcono({ size = 262, color = '#ffffff' }) {
         opacity="0.004"
       ></path>
       <path
+      fill={color}
         d="M54.5 102.5h40c.237 2.712.237 5.212 0 7.5-13.33.5-26.662.667-40 .5v-8z"
         opacity="0.997"
       ></path>

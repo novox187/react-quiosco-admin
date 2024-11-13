@@ -12,7 +12,7 @@ export default function Ordenes() {
 
   const { handleClickCompletarPedido, pedidosQuery, setPedidosQuery, modalEliminarOrden, setModalEliminarOrden, setOrdenEliminar, loadingCompletarPedido, token } = useAdmin();
 
-  const pedidosIncompletos = pedidosQuery?.pedidos.filter(pedido => pedido.estado === 1 || pedido.lugar === 'envio');
+  const pedidosIncompletos = pedidosQuery?.pedidos.filter(pedido => pedido.estado === 1);
 
   //Optener pedidos 
   const obtenerPedidos = async () => {

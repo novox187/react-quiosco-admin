@@ -97,7 +97,7 @@ const AdminProvider = ({ children }) => {
     const [idCajaCerrar, setIdCajaCerrar] = useState();
     const [loadingAbrirCaja, setLoadingAbrirCaja] = useState(false);
     const [registroVer, setRegistroVer] = useState([]);
-    const [datosCaja, setDatosCaja] = useState([]);
+    const [datosCaja, setDatosCaja] = useState(null);
     const [dinero, setDinero] = useState(0);
     const [nuevosDatosCaja, setNuevosDatosCaja] = useState();
     const [nuevoRegistro, setNuevoRegistro] = useState();
@@ -139,6 +139,9 @@ const AdminProvider = ({ children }) => {
     const { isOpen: isOpenVerEmployee, onOpen: onOpenVerEmployee, onOpenChange: onOpenChangeVerEmployee, onClose: onCloseVerEmployee } = useDisclosure();
     const { isOpen: isOpenEditarEmployee, onOpen: onOpenEditarEmployee, onOpenChange: onOpenChangeEditarEmployee, onClose: onCloseEditarEmployee } = useDisclosure();
     const [employeeVer, setEmployeeVer] = useState([]);
+
+    /* CAJA */
+    const { isOpen: isOpenAbrirCaja, onOpen: onOpenAbrirCaja, onOpenChange: onOpenChangeAbrirCaja, onClose: onCloseAbrirCaja } = useDisclosure();
 
     /* CONFIGURACIOES */
     const [loadingUpdateConfig, setLoadingUpdateConfig] = useState(false);
@@ -1114,6 +1117,10 @@ const AdminProvider = ({ children }) => {
                 onOpenEditarEmployee,
                 onOpenChangeEditarEmployee,
                 onCloseEditarEmployee,
+                isOpenAbrirCaja,
+                onOpenAbrirCaja,
+                onOpenChangeAbrirCaja,                
+                onCloseAbrirCaja,
             }}
         >
             {children}

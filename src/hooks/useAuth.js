@@ -127,9 +127,6 @@ export const useAuth = ({ middleware, url }) => {
           case "admin":
             // Permitir acceso a cualquier ruta excepto a /admin/repartidor
             if (
-              window.location.pathname === "/admin/repartidor" ||
-              window.location.pathname === "/admin/cocinero" ||
-              window.location.pathname === "/admin/mesero" ||
               window.location.pathname === "/"
             ) {
               navigate("/admin"); // Redirigir a la raíz si intenta acceder a /admin/repartidor

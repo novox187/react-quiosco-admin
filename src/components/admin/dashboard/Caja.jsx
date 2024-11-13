@@ -5,9 +5,11 @@ import { formatearDinero } from "../../../helpers"
 import useAdmin from "../../../hooks/useAdmin";
 import clienteAxios from "../../../config/axios";
 import CajaIcono from "../../icons/CajaIcono";
+import { useNavigate } from "react-router-dom";
 
 export default function Caja() {
     const {setDatosCaja, datosCaja } = useAdmin();
+    const navigate = useNavigate();
 
     const token = localStorage.getItem("AUTH_TOKEN");
     const obtenerDatosCaja = async () => {
@@ -28,7 +30,7 @@ export default function Caja() {
         obtenerDatosCaja();
     }, []);
 
-    if (datosCaja.length == 0) {
+    if (datosCaja == null) {
         return (
             <Card className=" bg-zinc-900 text-white shadow-xl p-3  min-w-[17rem] sm:min-w-[20rem] 2xl:min-w-[22rem] w-full">
                 <CardBody className=" flex justify-between">
@@ -72,6 +74,7 @@ export default function Caja() {
                     <CajaIcono size={40} />
                     <Button
                         variant="flat"
+                        onPress={() => navigate('/admin/cajas')}
                     >
                         Ver cajas
                     </Button>

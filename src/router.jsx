@@ -17,6 +17,7 @@ import PedidoMapa from './components/admin/PedidoMapa'
 import Configuracion from './views/Config/Configuracion'
 import ConfiguracionesLayout from './layouts/ConfiguracionesLayout'
 import ContenedoresControler from './views/ContenedoresControler'
+import Cajas from './views/Cajas'
 const router = createBrowserRouter([
 
     {
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
             {
                 path: '/admin/registro/:registroID',
                 element: <RegistroInforme />
+            },
+            {
+                path: '/admin/cajas',
+                element: <Cajas />
             },
         ]
     },

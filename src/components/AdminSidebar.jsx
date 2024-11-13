@@ -29,6 +29,9 @@ export default function AdminSidebar() {
                         <Link to="/admin/productos" className={`font-bold uppercase ${location.pathname === '/admin/productos' ? 'bg-zinc-800' : ''}  p-3 lg:p-4 rounded-xl lg:rounded-l-xl`}>Productos</Link>
                         <Link to="/admin/categorias" className={`font-bold uppercase ${location.pathname === '/admin/categorias' ? 'bg-zinc-800' : ''}  p-3 lg:p-4 rounded-xl lg:rounded-l-xl`}>Categorias</Link>
                         <Link to="/admin/resivos" className={`font-bold uppercase ${location.pathname === '/admin/resivos' ? 'bg-zinc-800' : ''}  p-3 lg:p-4 rounded-xl lg:rounded-l-xl`}>Resivos</Link>
+                        <Link to="/admin/mesero" className={`font-bold uppercase ${location.pathname === '/admin/mesero' ? 'bg-zinc-800' : ''}  p-3 lg:p-4 rounded-xl lg:rounded-l-xl`}>Mesero</Link>
+                        <Link to="/admin/cocinero" className={`font-bold uppercase ${location.pathname === '/admin/cocinero' ? 'bg-zinc-800' : ''}  p-3 lg:p-4 rounded-xl lg:rounded-l-xl`}>Chef</Link>
+                        <Link to="/admin/repartidor" className={`font-bold uppercase ${location.pathname === '/admin/repartidor' ? 'bg-zinc-800' : ''}  p-3 lg:p-4 rounded-xl lg:rounded-l-xl`}>Repartidor</Link>
                     </nav>
                 )}
                 {user?.rol === 'mesero' && (
