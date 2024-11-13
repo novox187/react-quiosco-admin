@@ -76,8 +76,8 @@ export default function CartaCajas({ caja }) {
                 ) : (
                     <div>
                         <h2 className='font-bold text-lg mb-2'>Última Apertura</h2>
-                        <p><span className='font-semibold'>Monto Inicial:</span> ${parseFloat(caja?.ultima_apertura?.monto_inicial).toFixed(2)}</p>
-                        <p><span className='font-semibold'>Fecha:</span> {formatDate(caja?.ultima_apertura?.created_at)}</p>
+                        <p><span className='font-semibold'>Monto Inicial:</span> ${parseFloat(caja?.ultima_apertura?.monto_inicial || 0).toFixed(2)}</p>
+                        <p><span className='font-semibold'>Fecha:</span> {caja?.ultima_apertura?.created_at? formatDate(caja?.ultima_apertura?.created_at) : 'Sin Apertura'}</p>
                     </div>
                 )}
 
