@@ -5,6 +5,7 @@ import ModalAbrirCaja from './ModalAbrirCaja'
 import ModalCerrarCaja from './ModalCerrarCaja'
 
 export default function CartaCajas({ caja }) {
+    console.log(caja)
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleString('es-ES', {
@@ -62,22 +63,22 @@ export default function CartaCajas({ caja }) {
                         <Divider />
                         <div>
                             <h2 className='font-bold text-lg mb-2'>Última Apertura</h2>
-                            <p><span className='font-semibold'>Fecha:</span> {formatDate(caja.ultima_apertura.created_at)}</p>
-                            <p><span className='font-semibold'>Monto Inicial:</span> ${parseFloat(caja.ultima_apertura.monto_inicial).toFixed(2)}</p>
+                            <p><span className='font-semibold'>Fecha:</span> {formatDate(caja?.ultima_apertura?.created_at)}</p>
+                            <p><span className='font-semibold'>Monto Inicial:</span> ${parseFloat(caja?.ultima_apertura?.monto_inicial).toFixed(2)}</p>
                         </div>
                         <Divider />
                         <div>
                             <h2 className='font-bold text-lg mb-2'>Último Cierre</h2>
-                            <p><span className='font-semibold'>Fecha:</span> {formatDate(caja.ultimo_cierre.created_at)}</p>
-                            <p><span className='font-semibold'>Monto Final:</span> ${parseFloat(caja.ultimo_cierre.monto_final).toFixed(2)}</p>
-                            <p><span className='font-semibold'>Total Ventas:</span> ${parseFloat(caja.ultimo_cierre.total_ventas).toFixed(2)}</p>
+                            <p><span className='font-semibold'>Fecha:</span> {formatDate(caja?.ultimo_cierre?.created_at)}</p>
+                            <p><span className='font-semibold'>Monto Final:</span> ${parseFloat(caja?.ultimo_cierre?.monto_final || 0).toFixed(2)}</p>
+                            <p><span className='font-semibold'>Total Ventas:</span> ${parseFloat(caja?.ultimo_cierre?.total_ventas || 0).toFixed(2)}</p>
                         </div>
                     </>
                 ) : (
                     <div>
                         <h2 className='font-bold text-lg mb-2'>Última Apertura</h2>
-                        <p><span className='font-semibold'>Monto Inicial:</span> ${parseFloat(caja.ultima_apertura.monto_inicial).toFixed(2)}</p>
-                        <p><span className='font-semibold'>Fecha:</span> {formatDate(caja.ultima_apertura.created_at)}</p>
+                        <p><span className='font-semibold'>Monto Inicial:</span> ${parseFloat(caja?.ultima_apertura?.monto_inicial).toFixed(2)}</p>
+                        <p><span className='font-semibold'>Fecha:</span> {formatDate(caja?.ultima_apertura?.created_at)}</p>
                     </div>
                 )}
 
