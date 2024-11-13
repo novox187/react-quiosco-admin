@@ -5,7 +5,6 @@ import ModalAbrirCaja from './ModalAbrirCaja'
 import ModalCerrarCaja from './ModalCerrarCaja'
 
 export default function CartaCajas({ caja }) {
-    console.log(caja)
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleString('es-ES', {
