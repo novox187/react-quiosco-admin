@@ -31,7 +31,7 @@ export default function Cajas() {
             </div>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-5 min-w-full'>
                 {datosCajas?.map(caja => (
-                    <CartaCajas key={caja.id} caja={caja} />
+                    <CartaCajas key={caja.id} caja={caja} setDatosCajas={setDatosCajas}/>
                 ))}
             </div>
         </div>

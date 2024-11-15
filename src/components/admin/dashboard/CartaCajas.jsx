@@ -4,7 +4,7 @@ import CajaIcono from '../../icons/CajaIcono'
 import ModalAbrirCaja from './ModalAbrirCaja'
 import ModalCerrarCaja from './ModalCerrarCaja'
 
-export default function CartaCajas({ caja }) {
+export default function CartaCajas({ caja, setDatosCajas }) {
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleString('es-ES', {
@@ -77,15 +77,15 @@ export default function CartaCajas({ caja }) {
                     <div>
                         <h2 className='font-bold text-lg mb-2'>Última Apertura</h2>
                         <p><span className='font-semibold'>Monto Inicial:</span> ${parseFloat(caja?.ultima_apertura?.monto_inicial || 0).toFixed(2)}</p>
-                        <p><span className='font-semibold'>Fecha:</span> {caja?.ultima_apertura?.created_at? formatDate(caja?.ultima_apertura?.created_at) : 'Sin Apertura'}</p>
+                        <p><span className='font-semibold'>Fecha:</span> {caja?.ultima_apertura?.created_at ? formatDate(caja?.ultima_apertura?.created_at) : 'Sin Apertura'}</p>
                     </div>
                 )}
 
             </CardBody>
             <CardFooter className='space-x-2 justify-end'>
                 <Button color="primary" variant="flat">Editar</Button>
-                <Button color="secondary" variant="flat"onPress={()=> setExpandir(!expandir)}>{expandir ? 'Ver menos': 'Ver mas'}</Button> 
-                <ModalAbrirCaja caja={caja} />
+                <Button color="secondary" variant="flat" onPress={() => setExpandir(!expandir)}>{expandir ? 'Ver menos' : 'Ver mas'}</Button>
+                <ModalAbrirCaja caja={caja} setDatosCajas={setDatosCajas} />
                 <ModalCerrarCaja caja={caja} />
             </CardFooter>
         </Card>

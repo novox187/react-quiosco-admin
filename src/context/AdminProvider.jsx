@@ -38,7 +38,7 @@ const AdminProvider = ({ children }) => {
     } catch (error) {
         console.error("Error parsing userData cookie:", error);
     }
-    const token = userData?.token || localStorage.getItem("AUTH_TOKEN");
+    const token = userData?.token;
 
     const Usuario = localStorage.getItem("USER");
 
@@ -400,6 +400,7 @@ const AdminProvider = ({ children }) => {
             onCambiarEstadoOpcion: (data) => setNuevoRegistro(data),
             onCrearEmployee: (data) => setNuevoEmployee(data),
             onEditarEmployee: (data) => setEmployeeEditado(data),
+            onAbrirCaja: (data) => console.log( 'desde el sokect',data),
         };
 
         // Registrar eventos de socket

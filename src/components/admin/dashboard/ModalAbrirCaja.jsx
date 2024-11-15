@@ -4,8 +4,8 @@ import { useState } from "react";
 import clienteAxios from "../../../config/axios";
 import { toast } from "react-toastify";
 
-export default function ModalAbrirCaja({ caja }) {
-    const { isOpenAbrirCaja: isOpen, onOpenAbrirCaja: onOpen, onOpenChangeAbrirCaja: onOpenChange, token, onCloseAbrirCaja: onClose } = useAdmin();
+export default function ModalAbrirCaja({ caja, setDatosCajas }) {
+    const { isOpenAbrirCaja: isOpen, onOpenAbrirCaja: onOpen, onOpenChangeAbrirCaja: onOpenChange, token, onCloseAbrirCaja: onClose, socketConnection } = useAdmin();
     const [dinero, setDinero] = useState(0);
     const [loadingAbrirCaja, setLoadingAbrirCaja] = useState(false);
 
@@ -21,7 +21,12 @@ export default function ModalAbrirCaja({ caja }) {
                     'Content-Type': 'application/json'
                 },
             });
-            console.log('Caja abierta con éxito:', data);
+            // Utilizar la función de setDatosCajas para actualizar el estado actual
+            setDatosCajas(prevCajas => actualizarCajaApertura(prevCajas, data));
+            let cajaestado = {
+                estado: data.estadoCaja,
+            };
+            socketConnection.emit("onAbrirCaja", cajaestado);
             toast.success('Caja abierta con éxito');
             onClose();
         } catch (error) {
@@ -34,6 +39,29 @@ export default function ModalAbrirCaja({ caja }) {
 
     const handleInputChange = (e) => {
         setDinero(e.target.value);
+    }
+
+    function actualizarCajaApertura(stateCajas, datosRespuesta) {
+        // Buscar la caja que coincide con el id_caja de la respuesta del servidor
+        const indiceCaja = stateCajas.findIndex(caja => caja.id === datosRespuesta.id_caja);
+
+        if (indiceCaja !== -1) {
+            // Actualizar la caja con la información de la respuesta
+            stateCajas[indiceCaja] = {
+                ...stateCajas[indiceCaja],
+                estado: datosRespuesta.estadoCaja,
+                ultima_apertura: {
+                    id: datosRespuesta.id,
+                    id_caja: datosRespuesta.id_caja,
+                    monto_inicial: datosRespuesta.monto_inicial,
+                    usuario_apertura: datosRespuesta.usuario_apertura,
+                    created_at: datosRespuesta.created_at,
+                    updated_at: datosRespuesta.updated_at
+                }
+            };
+        }
+
+        return [...stateCajas]; // Retornar una copia del arreglo actualizado
     }
 
     return (
