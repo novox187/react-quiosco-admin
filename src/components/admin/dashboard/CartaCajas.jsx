@@ -86,7 +86,7 @@ export default function CartaCajas({ caja, setDatosCajas }) {
                 <Button color="primary" variant="flat">Editar</Button>
                 <Button color="secondary" variant="flat" onPress={() => setExpandir(!expandir)}>{expandir ? 'Ver menos' : 'Ver mas'}</Button>
                 <ModalAbrirCaja caja={caja} setDatosCajas={setDatosCajas} />
-                <ModalCerrarCaja caja={caja} />
+                <ModalCerrarCaja caja={caja} setDatosCajas={setDatosCajas} />
             </CardFooter>
         </Card>
     )

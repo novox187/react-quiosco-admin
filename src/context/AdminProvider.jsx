@@ -401,6 +401,7 @@ const AdminProvider = ({ children }) => {
             onCrearEmployee: (data) => setNuevoEmployee(data),
             onEditarEmployee: (data) => setEmployeeEditado(data),
             onAbrirCaja: (data) => console.log( 'desde el sokect',data),
+            onCierreCaja: (data) => console.log( 'desde el sokect cierre',data),
         };
 
         // Registrar eventos de socket

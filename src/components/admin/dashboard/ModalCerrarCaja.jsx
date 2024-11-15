@@ -2,13 +2,14 @@ import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDi
 import { useState } from "react";
 import clienteAxios from '../../../config/axios';
 import useAdmin from "../../../hooks/useAdmin";
+import { toast } from "react-toastify";
 
-export default function ModalCerrarCaja({ caja }) {
+export default function ModalCerrarCaja({ caja, setDatosCajas }) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [dinero, setDinero] = useState(0);
     const [confirmacion, setConfirmacion] = useState("");
     const [loadingCerrarCaja, setLoadingCerrarCaja] = useState(false);
-    const { token } = useAdmin();
+    const { token, socketConnection } = useAdmin();
 
     const cerrarCaja = async () => {
         if (confirmacion.toLowerCase() !== "confirmar") {
@@ -27,15 +28,44 @@ export default function ModalCerrarCaja({ caja }) {
                     'Content-Type': 'application/json'
                 },
             });
-            alert('Caja cerrada con éxito');
+            toast.success('Caja cerrada con éxito');
             onOpenChange(false); // Cerrar el modal
+            setDatosCajas(prevCajas => actualizarCajaCierre(prevCajas, data));
+            let cajaestado = {
+                estado: data.estadoCaja,
+            };
+            socketConnection.emit("onCierreCaja", cajaestado);
         } catch (error) {
             console.error('Error al cerrar la caja:', error);
-            alert('Error al cerrar la caja.');
+            toast.error('Error al cerrar la caja.');
         } finally {
             setLoadingCerrarCaja(false);
         }
     };
+
+    function actualizarCajaCierre(stateCajas, datosRespuesta) {
+        // Buscar la caja que coincide con el id_caja de la respuesta del servidor
+        const indiceCaja = stateCajas.findIndex(caja => caja.id === datosRespuesta.id_caja);
+
+        if (indiceCaja !== -1) {
+            // Actualizar la caja con la información de la respuesta
+            stateCajas[indiceCaja] = {
+                ...stateCajas[indiceCaja],
+                estado: datosRespuesta.estadoCaja,
+                ultimo_cierre: {
+                    id: datosRespuesta.id,
+                    id_caja: datosRespuesta.id_caja,
+                    monto_final: datosRespuesta.monto_final,
+                    usuario_cierre: datosRespuesta.usuario_cierre,
+                    total_ventas: datosRespuesta.total_ventas,
+                    created_at: datosRespuesta.created_at,
+                    updated_at: datosRespuesta.updated_at
+                }
+            };
+        }
+
+        return [...stateCajas]; // Retornar una copia del arreglo actualizado
+    }
 
     return (
         <>
