@@ -18,6 +18,8 @@ import Configuracion from './views/Config/Configuracion'
 import ConfiguracionesLayout from './layouts/ConfiguracionesLayout'
 import ContenedoresControler from './views/ContenedoresControler'
 import Cajas from './views/Cajas'
+import BienvenidaLayout from './layouts/BienvenidaLayout'
+import PrimerEmployee from './views/Bienvenida/PrimerEmployee'
 const router = createBrowserRouter([
 
     {
@@ -87,16 +89,22 @@ const router = createBrowserRouter([
             {
                 index:true,
                 element: <Login />
-            },
-            {
-                path: '/auth/registro',
-                element: <Registro />
             }
         ]
     },
     {
         path: '/error',
         element: <Errores />,
+    },
+    {
+        path: '/bienvenida',
+        element: <BienvenidaLayout />,
+        children: [
+            {
+                index: true,
+                element: <PrimerEmployee />
+            }
+        ]
     }
 ])
 

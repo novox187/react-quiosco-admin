@@ -4,10 +4,36 @@ import clienteAxios from "../config/axios";
 import socketio from "socket.io-client";
 import Cookies from "js-cookie";
 import { useDisclosure } from "@nextui-org/react";
+import { useNavigate } from "react-router-dom";
 const AdminContext = createContext();
 
 
 const AdminProvider = ({ children }) => {
+
+
+    const [employeesExistentes, setEmployeesExistentes] = useState(false);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        noHayEmployees();
+        if (employeesExistentes) {
+            navigate('/bienvenida'); // Usa navigate en lugar de redirect
+        }
+    }, [employeesExistentes]);
+
+
+    const noHayEmployees = async () => {
+        try {
+            const { data } = await clienteAxios('/api/nohayempleados');
+            setEmployeesExistentes(data.sin_empleados);
+            console.log(data.sin_empleados)
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    useEffect(() => {
+        noHayEmployees();
+    }, []);
 
     const logoUrl = "https://res.cloudinary.com/dfrsffngq/image/upload/v1723651613/logo.png";
     // WEb Socket 
@@ -28,6 +54,7 @@ const AdminProvider = ({ children }) => {
             socket.disconnect();
         };
     }, []);
+
 
 
     // Obtener el token y los datos del usuario desde las cookies
@@ -400,8 +427,8 @@ const AdminProvider = ({ children }) => {
             onCambiarEstadoOpcion: (data) => setNuevoRegistro(data),
             onCrearEmployee: (data) => setNuevoEmployee(data),
             onEditarEmployee: (data) => setEmployeeEditado(data),
-            onAbrirCaja: (data) => console.log( 'desde el sokect',data),
-            onCierreCaja: (data) => console.log( 'desde el sokect cierre',data),
+            onAbrirCaja: (data) => console.log('desde el sokect', data),
+            onCierreCaja: (data) => console.log('desde el sokect cierre', data),
         };
 
         // Registrar eventos de socket
@@ -1122,7 +1149,7 @@ const AdminProvider = ({ children }) => {
                 onCloseEditarEmployee,
                 isOpenAbrirCaja,
                 onOpenAbrirCaja,
-                onOpenChangeAbrirCaja,                
+                onOpenChangeAbrirCaja,
                 onCloseAbrirCaja,
             }}
         >
