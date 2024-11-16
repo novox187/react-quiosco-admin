@@ -410,7 +410,9 @@ const AdminProvider = ({ children }) => {
         if (!socketConnection) return;
 
         const socketEventHandlers = {
-            onCrearProducto: (data) => setProductoNuevo(data.data),
+            onCrearProducto: (data) =>{
+                setProductoNuevo(data)
+            } ,
             onActualizarProductos: (data) => setProductoActualizar(data),
             onMoverProducto: (data) => setDatosProductoMover(data),
             onEliminarProductos: (data) => setProductoAEliminar(data),
@@ -681,7 +683,7 @@ const AdminProvider = ({ children }) => {
                 toast.success('Producto añadido Correctamente')
                 setModalCrearProducto(false)
                 setLoadingCrearProducto(false)
-                socketConnection.emit("onCrearProducto", data);
+                socketConnection.emit("onCrearProducto", data.producto);
                 socketConnection.emit("onRegistro", data.registro);
             } catch (error) {
                 setLoadingCrearProducto(false)
