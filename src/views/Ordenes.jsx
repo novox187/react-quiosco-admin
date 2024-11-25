@@ -10,30 +10,9 @@ export default function Ordenes() {
 
   useAuth({ middleware: 'ordenes' })
 
-  const { handleClickCompletarPedido, pedidosQuery, setPedidosQuery, modalEliminarOrden, setModalEliminarOrden, setOrdenEliminar, loadingCompletarPedido, token } = useAdmin();
+  const { handleClickCompletarPedido, pedidosQuery, modalEliminarOrden, setModalEliminarOrden, setOrdenEliminar, loadingCompletarPedido } = useAdmin();
 
   const pedidosIncompletos = pedidosQuery?.pedidos.filter(pedido => pedido.estado === 1);
-
-  //Optener pedidos 
-  const obtenerPedidos = async () => {
-    if (!pedidosQuery) {
-      try {
-        const { data } = await clienteAxios(`/api/pedidos/admin`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data'
-          },
-        });
-        setPedidosQuery(data);
-      } catch (error) {
-        console.error(error)
-        console.error('inicia session')
-      }
-    }
-  };
-  useEffect(() => {
-    obtenerPedidos();
-  }, []);
 
   const [listo, setListo] = useState(() => {
     const storedData = localStorage.getItem("productosListos");

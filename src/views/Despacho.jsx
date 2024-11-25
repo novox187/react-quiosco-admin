@@ -23,7 +23,6 @@ export default function Despacho() {
         setModalConfirmarPedido,
         modalConfirmarPedido,
         setPrecioPedido,
-        precioPedido
     } = useAdmin()
 
     const [busqueda, setBusqueda] = useState("");

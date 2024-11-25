@@ -26,7 +26,6 @@ const AdminProvider = ({ children }) => {
         try {
             const { data } = await clienteAxios('/api/nohayempleados');
             setEmployeesExistentes(data.sin_empleados);
-            console.log(data.sin_empleados)
         } catch (error) {
             console.error(error);
         }
@@ -410,9 +409,9 @@ const AdminProvider = ({ children }) => {
         if (!socketConnection) return;
 
         const socketEventHandlers = {
-            onCrearProducto: (data) =>{
+            onCrearProducto: (data) => {
                 setProductoNuevo(data)
-            } ,
+            },
             onActualizarProductos: (data) => setProductoActualizar(data),
             onMoverProducto: (data) => setDatosProductoMover(data),
             onEliminarProductos: (data) => setProductoAEliminar(data),
@@ -643,6 +642,28 @@ const AdminProvider = ({ children }) => {
     useEffect(() => {
         obtenerProductos();
     }, []);
+
+    //Optener pedidos 
+    const obtenerPedidos = async () => {
+        if (!pedidosQuery) {
+            try {
+                const { data } = await clienteAxios(`/api/pedidos/admin`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data'
+                    },
+                });
+                setPedidosQuery(data);
+            } catch (error) {
+                console.error(error)
+                console.error('inicia session')
+            }
+        }
+    };
+    useEffect(() => {
+        obtenerPedidos();
+    }, []);
+
 
     /* Obtener categorias */
     const obtenerCategoriasProductos = async () => {
