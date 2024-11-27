@@ -430,6 +430,7 @@ const AdminProvider = ({ children }) => {
             onEditarEmployee: (data) => setEmployeeEditado(data),
             onAbrirCaja: (data) => console.log('desde el sokect', data),
             onCierreCaja: (data) => console.log('desde el sokect cierre', data),
+            onFinalizarPedido: (data) => console.log('desde el sokect finalizar pedido', data),
         };
 
         // Registrar eventos de socket
@@ -954,10 +955,12 @@ const AdminProvider = ({ children }) => {
                     'Content-Type': 'multipart/form-data'
                 },
             });
+            navigate('/admin/repartidor')
             setLoadingFinalizarPedido(false);
-            window.location.reload();
             setPedidoEnCurso(null);
             Cookies.remove('pedidoEnCurso');
+            console.log(data)
+            socketConnection.emit("onFinalizarPedido", data);
         } catch (error) {
             console.error(error);
             setLoadingFinalizarPedido(false);
