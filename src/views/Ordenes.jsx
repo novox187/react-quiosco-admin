@@ -3,7 +3,6 @@ import useAdmin from "../hooks/useAdmin";
 import { useAuth } from "../hooks/useAuth";
 import { Button, Card } from "@nextui-org/react";
 import Usuario from "../components/Usuario";
-import clienteAxios from "../config/axios";
 
 
 export default function Ordenes() {
@@ -103,7 +102,8 @@ export default function Ordenes() {
                   <p className="text-xl font-bold text-slate-300">
                     Contenido del Pedido:
                   </p>
-                  <span>Id: {pedido.id}</span>
+                  <span>Id: {pedido.id}</span><br />
+                  <span>Numero de pedido: {pedido.numero_pedido}</span>
 
                   {pedido.productos.map((producto, index) => (
                     <div

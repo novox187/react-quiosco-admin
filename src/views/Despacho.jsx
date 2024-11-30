@@ -53,8 +53,7 @@ export default function Despacho() {
             </div>
         )
     }
-
-    const pedidosIncompletos = pedidosQuery?.pedidos.filter(pedido => pedido.estado < 3 && pedido.lugar === 'recoger')
+    const pedidosIncompletos = pedidosQuery?.pedidos.filter(pedido => pedido.estado == 0  || pedido.pago === 'transferencia')
 
     const PedidosFiltrados = busquedaPedidos
         ? pedidosIncompletos?.filter(pedido => {
@@ -269,11 +268,16 @@ export default function Despacho() {
                                     Lugar: {''}
                                     <span className='font-normal text-slate-300'>{pedido.lugar}</span>
                                 </p>
+                                <p className='text-lg font-bold text-red-800'>
+                                    metodo de pago: {''}
+                                    <span className='font-normal text-slate-300'>{pedido.pago}</span>
+                                </p>
 
                                 <p className='text-lg font-bold text-red-800'>
                                     Total a Pagar: {''}
                                     <span className='font-normal text-slate-300'>{formatearDinero(pedido.total)}</span>
                                 </p>
+
                                 <div className='w-full flex'>
                                     <Button
                                         type="button"
