@@ -1,16 +1,16 @@
-import useAdmin from '../hooks/useAdmin'
-import { formatearDinero } from '../helpers'
-import { useAuth } from '../hooks/useAuth'
-import { Button, Card, Chip, Input } from '@nextui-org/react'
-import Usuario from '../components/Usuario'
-import { useState } from 'react'
-import ProductosMesero from '../components/admin/ProductosMesero'
-import ResumenFooterMesero from '../components/admin/ResumenFooterMesero'
+import useAdmin from '../hooks/useAdmin';
+import { formatearDinero } from '../helpers';
+import { useAuth } from '../hooks/useAuth';
+import { Button, Card, Chip, Input } from '@nextui-org/react';
+import Usuario from '../components/Usuario';
+import { useState } from 'react';
+import ProductosMesero from '../components/admin/ProductosMesero';
+import ResumenFooterMesero from '../components/admin/ResumenFooterMesero';
 
 export default function Despacho() {
     const [opcionMesero, setOpcionMesero] = useState('pedidos');
 
-    useAuth({ middleware: 'despacho' })
+    useAuth({ middleware: 'despacho' });
     const {
         handleClickCompletarPedido,
         pedidosQuery,
@@ -23,7 +23,7 @@ export default function Despacho() {
         setModalConfirmarPedido,
         modalConfirmarPedido,
         setPrecioPedido,
-    } = useAdmin()
+    } = useAdmin();
 
     const [busqueda, setBusqueda] = useState("");
     const [busquedaPedidos, setBusquedaPedidos] = useState("");
@@ -34,6 +34,7 @@ export default function Despacho() {
     const handleBusquedaPedidosChange = (e) => {
         setBusquedaPedidos(e.target.value);
     };
+
     const productosFiltrados = busqueda
         ? productoQuery?.data.filter(producto => (
             producto.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
@@ -51,9 +52,10 @@ export default function Despacho() {
                 />
                 <h1 className=" font-bold text-white text-xl">Cargando...</h1>
             </div>
-        )
+        );
     }
-    const pedidosIncompletos = pedidosQuery?.pedidos.filter(pedido => pedido.estado == 0  || pedido.pago === 'transferencia')
+
+    const pedidosIncompletos = pedidosQuery?.pedidos.filter(pedido => pedido.estado === 0 || pedido.pago === 'transferencia');
 
     const PedidosFiltrados = busquedaPedidos
         ? pedidosIncompletos?.filter(pedido => {
@@ -75,18 +77,17 @@ export default function Despacho() {
             idU: idU,
             name: name,
             calificacion: calificacion,
-        }
-        setOrdenEliminar(ids)
+        };
+        setOrdenEliminar(ids);
         setModalEliminarOrden(!modalEliminarOrden);
+    };
 
-    }
-
-    const generarEstrellas = (cantidad) => {
+    const generarEstrellas = (cantidad, idPedido) => {
         const estrellas = [];
         for (let i = 1; i <= cantidad; i++) {
             estrellas.push(
                 <span
-                    key={i}
+                    key={`${idPedido}-star-${i}`}
                     className={'text-yellow-400'}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
@@ -99,9 +100,9 @@ export default function Despacho() {
     };
 
     const handleClickVerificarPedido = (id, estado, correo, total) => {
-        setPrecioPedido({ total, id, estado, correo })
-        setModalConfirmarPedido(!modalConfirmarPedido)
-    }
+        setPrecioPedido({ total, id, estado, correo });
+        setModalConfirmarPedido(!modalConfirmarPedido);
+    };
 
     return (
         <div className='mb-40 pb-20 w-full'>
@@ -131,7 +132,6 @@ export default function Despacho() {
                         Menu
                     </Button>
                 </div>
-                {/* BUSQUEDA PRODUCTO */}
                 <form
                     className={` flex flex-row justify-center items-center w-full md:w-auto md:justify-end my-1 space-x-1`}
                 >
@@ -198,7 +198,7 @@ export default function Despacho() {
 
                                 {pedido.productos.map((producto, index) => (
                                     <div
-                                        key={index}
+                                        key={`producto-${pedido.id}-${producto.id}-${index}`}
                                         className={`flex justify-between items-center border-b border-slate-200 last-of-type:border-none py-4 m-1 cursor-pointer`}
                                     >
                                         <div>
@@ -209,11 +209,11 @@ export default function Despacho() {
                                                 className=" ml-2 mt-2 font-bold"
                                                 htmlFor="descripcion"
                                             >
-                                                Descripcion del plato:{" "}
+                                                Descripcion del plato:
                                             </label>
 
-                                            {producto.detalles_producto.map((detalle) => (
-                                                <div key={detalle.id}>
+                                            {producto.detalles_producto.map((detalle, detalleIndex) => (
+                                                <div key={`detalle-${producto.id}-${detalle.id}-${detalleIndex}`} className="mt-2">
                                                     <p className=" mx-2 text-famaClaro">
                                                         {detalle.nombre_contenedor}:
                                                     </p>
@@ -230,10 +230,7 @@ export default function Despacho() {
                                                         <span className=" pl-3 text-sm text-slate-200">
                                                             {detalle.opcion}
                                                         </span>
-
                                                     )}
-
-
                                                 </div>
                                             ))}
                                         </div>
@@ -243,52 +240,49 @@ export default function Despacho() {
 
                             <div className='w-full'>
                                 <p className='text-lg font-bold text-red-800'>
-                                    Cliente: {''}
-                                    <div className=' flex space-x-1'>
-                                        <span className='font-normal text-white'>{pedido.user.name}</span>
-                                    </div>
-                                    <span className="flex">
-                                        {generarEstrellas(pedido.user.calificacion)}
-                                    </span>
+                                    Cliente:{' '}
+                                    <span className='font-normal text-white'>{pedido.user.name}</span>
                                 </p>
+                                <div className='flex space-x-1'>
+                                    {generarEstrellas(pedido.user.calificacion, pedido.id)}
+                                </div>
                                 {pedido.mesa ? (
                                     <p className='text-lg font-bold text-red-800'>
-                                        Mesa: {''}
+                                        Mesa:{' '}
                                         <span className='font-normal text-white'>{pedido.mesa}</span>
                                     </p>
                                 ) : (
-                                    <p className='ttext-lg font-bold text-red-800'>
-                                        Lugar: {''}
+                                    <p className='text-lg font-bold text-red-800'>
+                                        Lugar:{' '}
                                         <span className='font-normal text-white'>Para llevar</span>
                                     </p>
                                 )}
 
-
                                 <p className='text-lg font-bold text-red-800'>
-                                    Lugar: {''}
+                                    Lugar:{' '}
                                     <span className='font-normal text-slate-300'>{pedido.lugar}</span>
                                 </p>
                                 <p className='text-lg font-bold text-red-800'>
-                                    metodo de pago: {''}
+                                    Metodo de pago:{' '}
                                     <span className='font-normal text-slate-300'>{pedido.pago}</span>
                                 </p>
 
                                 <p className='text-lg font-bold text-red-800'>
-                                    Total a Pagar: {''}
+                                    Total a Pagar:{' '}
                                     <span className='font-normal text-slate-300'>{formatearDinero(pedido.total)}</span>
                                 </p>
 
                                 <div className='w-full flex'>
                                     <Button
                                         type="button"
-                                        className={`${pedido.estado === 1 ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} " bg-zinc-600 hover:bg-zinc-800 px-5 py-2 rounded uppercase font-bold text-white w-full "`}
+                                        className={`${pedido.estado === 1 ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} bg-zinc-600 hover:bg-zinc-800 px-5 py-2 rounded uppercase font-bold text-white w-full`}
                                         isDisabled={loadingConfirmarPedido || loadingEntregarPedido}
                                         onClick={() => {
                                             if (pedido.estado === 0) {
-                                                handleClickVerificarPedido(pedido.id, 0, 'novox187@gmail.com', pedido.total)
+                                                handleClickVerificarPedido(pedido.id, 0, 'novox187@gmail.com', pedido.total);
                                             }
                                             if (pedido.estado === 2) {
-                                                handleClickCompletarPedido(pedido.id, 2, 'novox187@gmail.com')
+                                                handleClickCompletarPedido(pedido.id, 2, 'novox187@gmail.com');
                                             }
                                         }}
                                     >
@@ -313,7 +307,7 @@ export default function Despacho() {
                                         isDisabled={loadingConfirmarPedido || loadingEntregarPedido}
                                         onClick={() => {
                                             if (!loadingConfirmarPedido || !loadingEntregarPedido) {
-                                                handleClickObtenerIdOrden(pedido.id, pedido.user.id, pedido.user.name, pedido.user.calificacion)
+                                                handleClickObtenerIdOrden(pedido.id, pedido.user.id, pedido.user.name, pedido.user.calificacion);
                                             }
                                         }}
                                     >
@@ -330,9 +324,9 @@ export default function Despacho() {
                 </div>
 
                 <div className={`${opcionMesero === 'pedidos' ? 'max-h-0 max-w-0 opacity-0 overflow-hidden' : ' opacity-100'}  grid gap-1 md:gap-2  min-w-full grid-cols-2 sm:grid-cols-3  lg:grid-cols-4 2xl:grid-cols-5 transition-all duration-500`}>
-                    {productosFiltrados?.map(producto => (
+                    {productosFiltrados?.map((producto, productoIndex) => (
                         <ProductosMesero
-                            key={producto.imagen}
+                            key={`producto-${producto.id}-${productoIndex}`}
                             producto={producto}
                         />
                     ))}
@@ -342,5 +336,5 @@ export default function Despacho() {
                 </div>
             </div>
         </div>
-    )
+    );
 }

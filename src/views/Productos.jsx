@@ -106,7 +106,7 @@ export default function Productos() {
                 {productosFiltrados && productosFiltrados.length > 0 ? (
                     productosFiltrados.map(producto => (
                         <ProductosAdmin
-                            key={producto.imagen}
+                            key={producto.id}
                             producto={producto}
                         />
                     ))
