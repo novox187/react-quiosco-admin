@@ -698,7 +698,6 @@ const AdminProvider = ({ children }) => {
     /* PRODUCTO */
     /* Funcion Crear producto */
     const crearProducto = async (datosProductoNuevo) => {
-        const token = localStorage.getItem('AUTH_TOKEN');
         if (userData) {
             try {
                 const { data } = await clienteAxios.post('/api/productos/create', datosProductoNuevo, {
@@ -824,7 +823,6 @@ const AdminProvider = ({ children }) => {
     /* Funcion Crear Categoria */
     const crearCategoria = async (datosIconoNuevo) => {
         setErroresCrearCategoria([])
-        const token = localStorage.getItem('AUTH_TOKEN');
         if (userData) {
             try {
                 const { data } = await clienteAxios.post('/api/categorias/create', datosIconoNuevo, {
@@ -895,7 +893,6 @@ const AdminProvider = ({ children }) => {
         const datosCaja = {
             dinero_abrir: dinero.target.value,
         }
-        const token = localStorage.getItem('AUTH_TOKEN');
         if (userData) {
             try {
                 const { data } = await clienteAxios.post('/api/caja/abrir', datosCaja, {
@@ -973,7 +970,6 @@ const AdminProvider = ({ children }) => {
 
     const CrearNegocio = async (formData) => {
         try {
-            const token = localStorage.getItem('AUTH_TOKEN');
             const response = await clienteAxios.post('/api/informacion/create', formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -988,7 +984,6 @@ const AdminProvider = ({ children }) => {
     const ActualizarNegocio = async (id, formData) => {
         setLoadingUpdateConfig(true);
         try {
-            const token = localStorage.getItem('AUTH_TOKEN');
             const response = await clienteAxios.post(`/api/informacion/update/${id}`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -1006,7 +1001,6 @@ const AdminProvider = ({ children }) => {
 
     const obtenerNegocio = async () => {
         try {
-            const token = localStorage.getItem('AUTH_TOKEN');
             const response = await clienteAxios.get('/api/informacion/view', { // Ruta actualizada
                 headers: {
                     Authorization: `Bearer ${token}` // Incluye el token de autenticación
