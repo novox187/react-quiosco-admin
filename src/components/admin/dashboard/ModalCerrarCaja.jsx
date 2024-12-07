@@ -36,7 +36,6 @@ export default function ModalCerrarCaja({ caja, setDatosCajas }) {
             };
             socketConnection.emit("onCierreCaja", cajaestado);
         } catch (error) {
-            console.error('Error al cerrar la caja:', error);
             toast.error(error.response.data.message);
         } finally {
             setLoadingCerrarCaja(false);
