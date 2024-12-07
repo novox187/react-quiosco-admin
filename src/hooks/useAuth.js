@@ -21,9 +21,8 @@ export const useAuth = ({ middleware, url }) => {
     userActual,
   } = useGeneralContext();
 
-  const { pedidoEnCurso,onCloseCrearEmployee, socketConnection } = useAdmin();
+  const { pedidoEnCurso,onCloseCrearEmployee, socketConnection,token } = useAdmin();
 
-  const token = localStorage.getItem("AUTH_TOKEN");
 
   const fetcher = useCallback(async () => {
     const response = await clienteAxios("/api/employees/session", {
@@ -46,8 +45,6 @@ export const useAuth = ({ middleware, url }) => {
       setLoadingLogin(true);
       try {
         const { data } = await clienteAxios.post("/api/employee/login", datos);
-        localStorage.setItem("AUTH_TOKEN", data.token);
-        localStorage.setItem("USER", datos.email);
         setErrores([]);
         setModalAuth(!modalAuth);
         toast.success(`Bienvenido ${data?.name}`);
@@ -97,8 +94,6 @@ export const useAuth = ({ middleware, url }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      localStorage.removeItem("AUTH_TOKEN");
-      localStorage.removeItem("USER");
       Cookies.remove("userData");
       setUserActual([]);
       window.location.reload();

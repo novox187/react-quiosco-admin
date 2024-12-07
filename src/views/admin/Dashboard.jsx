@@ -10,14 +10,14 @@ import clienteAxios from "../../config/axios"
 import Usuario from "../../components/Usuario"
 import Caja from "../../components/admin/dashboard/Caja"
 import TablaRegistro from "../../components/admin/dashboard/TablaRegistro"
+import useAdmin from "../../hooks/useAdmin"
 
 export default function Dashboard() {
-
+  const {token} = useAdmin();
   /* PANEL */
   const [datosPanel, setDatosPanel] = useState()
 
   /* PANEL */
-  const token = localStorage.getItem("AUTH_TOKEN");
   const obtenerDatosPanel = async () => {
     try {
       const { data } = await clienteAxios("/api/datos/datosPanel", {

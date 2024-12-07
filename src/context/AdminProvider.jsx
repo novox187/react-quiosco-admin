@@ -57,16 +57,26 @@ const AdminProvider = ({ children }) => {
 
 
     // Obtener el token y los datos del usuario desde las cookies
-    const jsonString = Cookies.get('userData');
-    let userData = null;
-    try {
-        userData = JSON.parse(jsonString);
-    } catch (error) {
-        console.error("Error parsing userData cookie:", error);
-    }
-    const token = userData?.token;
+    // Obteniendo el valor de las cookies
+    let jsonString = null;
 
-    const Usuario = localStorage.getItem("USER");
+    try {
+        const cookieValue = Cookies.get('userData');
+        if (cookieValue) {
+            jsonString = JSON.parse(cookieValue);
+        }
+    } catch (error) {
+        console.error("Error al parsear la cookie 'userData':", error);
+    }
+    
+    let userData = null;
+    let token = null;
+    
+    if (jsonString) {
+        // Extraer el token y el resto de las propiedades
+        ({ token, ...userData } = jsonString);
+    }
+     
 
     /* ESTADOS  */
     const [productoQuery, setProductoQuery] = useState(null);
@@ -490,7 +500,7 @@ const AdminProvider = ({ children }) => {
         if (variable === 2) {
             setLoadingEntregarPedido(id);
         }
-        if (localStorage.getItem('USER')) {
+        if (userData) {
             try {
                 const { data } = await clienteAxios.put(
                     `/api/pedidos/actualizar/${id}`,
@@ -583,9 +593,8 @@ const AdminProvider = ({ children }) => {
     };
 
     const handleSubmitNuevaOrden = async () => {
-        const token = localStorage.getItem("AUTH_TOKEN");
         setLoadingNuevaOrden(true)
-        if (localStorage.getItem('USER')) {
+        if (userData) {
             try {
                 const { data } = await clienteAxios.post(
                     "/api/pedidos/nuevo",
@@ -656,8 +665,7 @@ const AdminProvider = ({ children }) => {
                 });
                 setPedidosQuery(data);
             } catch (error) {
-                console.error(error)
-                console.error('inicia session')
+                console.warn('inicia session')
             }
         }
     };
@@ -668,9 +676,7 @@ const AdminProvider = ({ children }) => {
 
     /* Obtener categorias */
     const obtenerCategoriasProductos = async () => {
-
-        const token = localStorage.getItem("AUTH_TOKEN");
-        if (localStorage.getItem('USER')) {
+        if (userData) {
             try {
                 const { data } = await clienteAxios("/api/categorias/productos", {
                     headers: {
@@ -693,7 +699,7 @@ const AdminProvider = ({ children }) => {
     /* Funcion Crear producto */
     const crearProducto = async (datosProductoNuevo) => {
         const token = localStorage.getItem('AUTH_TOKEN');
-        if (localStorage.getItem('USER')) {
+        if (userData) {
             try {
                 const { data } = await clienteAxios.post('/api/productos/create', datosProductoNuevo, {
                     headers: {
@@ -761,7 +767,7 @@ const AdminProvider = ({ children }) => {
     };
 
     const eliminarProducto = async (id) => {
-        if (localStorage.getItem('USER')) {
+        if (userData) {
             try {
                 const { data } = await clienteAxios.put(`/api/productos/eliminar/${id}`, null, {
                     headers: {
@@ -781,8 +787,7 @@ const AdminProvider = ({ children }) => {
     }
 
     const moverProducto = async (datos, id) => {
-        const token = localStorage.getItem("AUTH_TOKEN");
-        if (localStorage.getItem('USER')) {
+        if (userData) {
             try {
                 const { data } = await clienteAxios.put(`/api/productos/mover/${id}`, datos, {
                     headers: {
@@ -820,7 +825,7 @@ const AdminProvider = ({ children }) => {
     const crearCategoria = async (datosIconoNuevo) => {
         setErroresCrearCategoria([])
         const token = localStorage.getItem('AUTH_TOKEN');
-        if (localStorage.getItem('USER')) {
+        if (userData) {
             try {
                 const { data } = await clienteAxios.post('/api/categorias/create', datosIconoNuevo, {
                     headers: {
@@ -844,7 +849,7 @@ const AdminProvider = ({ children }) => {
 
     /* Funcion eliminar categoria */
     const eliminarCategoria = async (id) => {
-        if (localStorage.getItem('USER')) {
+        if (userData) {
             try {
                 const { data } = await clienteAxios.delete(`/api/categorias/eliminar/${id}`, {
                     headers: {
@@ -864,7 +869,7 @@ const AdminProvider = ({ children }) => {
     }
 
     const editarCategoria = async (datosIconoNuevo, id) => {
-        if (localStorage.getItem('USER')) {
+        if (userData) {
             try {
                 const { data } = await clienteAxios.post(`/api/categorias/update/${id}`, datosIconoNuevo, {
                     headers: {
@@ -891,7 +896,7 @@ const AdminProvider = ({ children }) => {
             dinero_abrir: dinero.target.value,
         }
         const token = localStorage.getItem('AUTH_TOKEN');
-        if (localStorage.getItem('USER')) {
+        if (userData) {
             try {
                 const { data } = await clienteAxios.post('/api/caja/abrir', datosCaja, {
                     headers: {
@@ -913,7 +918,6 @@ const AdminProvider = ({ children }) => {
 
 
     const asignarPedido = async (pedidoId) => {
-        const token = localStorage.getItem("AUTH_TOKEN");
         try {
             const { data } = await clienteAxios.post(`/api/pedidos/repartidor/asignar/${pedidoId}`, {}, {
                 headers: {
@@ -1177,6 +1181,7 @@ const AdminProvider = ({ children }) => {
                 onOpenAbrirCaja,
                 onOpenChangeAbrirCaja,
                 onCloseAbrirCaja,
+                userData,
             }}
         >
             {children}

@@ -8,10 +8,9 @@ import CajaIcono from "../../icons/CajaIcono";
 import { useNavigate } from "react-router-dom";
 
 export default function Caja() {
-    const {setDatosCaja, datosCaja } = useAdmin();
+    const {setDatosCaja, datosCaja,token } = useAdmin();
     const navigate = useNavigate();
 
-    const token = localStorage.getItem("AUTH_TOKEN");
     const obtenerDatosCaja = async () => {
         try {
             const { data } = await clienteAxios("/api/caja", {

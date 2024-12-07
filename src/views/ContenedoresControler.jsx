@@ -7,10 +7,9 @@ import { toast } from 'react-toastify';
 import useAdmin from '../hooks/useAdmin';
 
 export default function ContenedoresControler() {
-    const { socketConnection } = useAdmin();
+    const { socketConnection, token } = useAdmin();
     const [contenedoresQuery, setContenedoresQuery] = useState([]);
     const [loading, setLoading] = useState(true);
-    const token = localStorage.getItem("AUTH_TOKEN");
 
     useEffect(() => {
         const obtenerContenedores = async () => {

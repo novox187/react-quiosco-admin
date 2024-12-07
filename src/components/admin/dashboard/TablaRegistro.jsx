@@ -33,15 +33,13 @@ const statusColorMap = {
 const INITIAL_VISIBLE_COLUMNS = ["id", "responsable", "rol", "accion", "opciones"];
 
 export default function TablaRegistro() {
-
+    const { token } = useAdmin();
     const { setRegistros, registros } = useAdmin();
     const navigate = useNavigate();
 
     const handleClickRegistro = (id) => {
         navigate(`/admin/registro/${id}`)
     }
-
-    const token = localStorage.getItem("AUTH_TOKEN");
 
     const user = async () => {
         try {
@@ -246,11 +244,11 @@ export default function TablaRegistro() {
                         <Dropdown>
                             <DropdownTrigger>
                                 <Button isIconOnly size="sm" variant="light">
-                                    <OpcionesIcono className="size-6"/>
+                                    <OpcionesIcono className="size-6" />
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
-                                <DropdownItem onClick={() => handleClickRegistro(registro.id)} endContent={<OjoIcono className="size-4"/>} variant="flat">Ver</DropdownItem>
+                                <DropdownItem onClick={() => handleClickRegistro(registro.id)} endContent={<OjoIcono className="size-4" />} variant="flat">Ver</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>

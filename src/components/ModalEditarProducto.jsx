@@ -12,8 +12,7 @@ import ContenedorOpciones from "./ContenedorOpciones";
 import MenosIcono from "./icons/MenosIcono";
 
 export default function ModalEditarProducto() {
-    const token = localStorage.getItem("AUTH_TOKEN");
-    const { setModalEditarProducto, modalEditarProducto, productoEditar, setProductoEditar, handleClickEditarProducto, errorEdicionProducto, loadingIsEdit, setLoadingIsEdit } = useAdmin();
+    const { setModalEditarProducto, modalEditarProducto, productoEditar, setProductoEditar, handleClickEditarProducto, errorEdicionProducto, loadingIsEdit, setLoadingIsEdit, token} = useAdmin();
 
     const [nuevaImagenProducto, setNuevaImagenProducto] = useState([]);
     const [promociones, setPromociones] = useState([]);

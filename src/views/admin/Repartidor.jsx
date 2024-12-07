@@ -3,10 +3,11 @@ import PedidoCard from '../../components/admin/PedidoCard'
 import Usuario from '../../components/Usuario'
 import clienteAxios from '../../config/axios';
 import { useAuth } from '../../hooks/useAuth';
+import useAdmin from '../../hooks/useAdmin';
 
 export default function Repartidor() {
   useAuth({ middleware: 'repartidor' })
-  const token = localStorage.getItem("AUTH_TOKEN");
+  const {token} = useAdmin();
   const [pedidos, setPedidos] = useState(null);
 
   const obtenerPedidosRepartidor = async () => {

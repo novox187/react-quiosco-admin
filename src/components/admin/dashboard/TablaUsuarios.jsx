@@ -23,6 +23,7 @@ import OpcionesIcono from "../../icons/OpcionesIcono";
 import OjoIcono from "../../icons/OjoIcono";
 import EditarIcon from "../../icons/EditarIcon";
 import EliminarIcon from "../../icons/EliminarIcon";
+import useAdmin from "../../../hooks/useAdmin";
 
 const statusColorMap = {
   activo: "success",
@@ -34,8 +35,7 @@ const INITIAL_VISIBLE_COLUMNS = ["name", "calificacion", "status", "actions"];
 
 export default function TablaUsuarios() {
   const [users, setUsers] = useState([])
-
-  const token = localStorage.getItem("AUTH_TOKEN");
+  const {token} = useAdmin();
 
   const user = async () => {
     try {

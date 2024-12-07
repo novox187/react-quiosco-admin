@@ -3,10 +3,12 @@ import { Button } from '@nextui-org/react';
 import AcordionOpcion from './AcordionOpcion';
 import { toast } from 'react-toastify';
 import clienteAxios from '../config/axios';
+import useAdmin from '../hooks/useAdmin';
 
 const ContenedorOpciones = ({ opcionesProducto, setOpcionesProducto, encabezado = 'Contenedores de opciones', opcionesActuales = [], agregarContenedor = true }) => {
     const [abrirContenedores, setAbrirContenedores] = useState(false);
     const [contenedoresQuery, setContenedoresQuery] = useState([])
+    const {token,userData} = useAdmin();
 
     const filtrarOpciones = (contenedoresQuery, opcionesActuales) => {
         return contenedoresQuery.filter(query => {
@@ -28,8 +30,7 @@ const ContenedorOpciones = ({ opcionesProducto, setOpcionesProducto, encabezado 
 
 
     const obtenerContenedores = async () => {
-        if (localStorage.getItem('USER')) {
-            const token = localStorage.getItem("AUTH_TOKEN");
+        if (userData) {
             try {
                 const { data } = await clienteAxios("/api/contenedores", {
                     headers: {

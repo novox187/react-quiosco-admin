@@ -24,9 +24,10 @@ import {
 } from '@nextui-org/react'
 import { formatearFecha } from '../../helpers';
 import { toast } from 'react-toastify';
+import useAdmin from '../../hooks/useAdmin';
 
 export default function ResivosPedidos() {
-    const token = localStorage.getItem("AUTH_TOKEN");
+    const {token} = useAdmin();
     const [selectedKeys, setSelectedKeys] = useState("numero_pedido");
     const [pedidos, setPedidos] = useState([]);
     const [resultadoBusqueda, setResultadoBusqueda] = useState();

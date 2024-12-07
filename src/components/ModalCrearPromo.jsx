@@ -6,7 +6,7 @@ import { formatearTextoDB } from "../helpers";
 import useAdmin from "../hooks/useAdmin";
 import BotonCarga from "./BotonCarga";
 export default function ModalCrearPromo() {
-    const { modalCrearPromo, setModalCrearPromo, socketConnection } = useAdmin();
+    const { modalCrearPromo, setModalCrearPromo, socketConnection,token } = useAdmin();
 
     const [errorPromo, setErrorPromo] = useState();
     const [loading, setLoading] = useState(false)
@@ -21,8 +21,6 @@ export default function ModalCrearPromo() {
             nombre_promo: formatearTextoDB(nombrePromoRef.current.value),
             porciento_promo: formatearTextoDB(porcientoPromoRef.current.value),
         }
-
-        const token = localStorage.getItem('AUTH_TOKEN');
         try {
             const { data } = await clienteAxios.post('/api/promocion/create', datosNuevaPromo, {
                 headers: {

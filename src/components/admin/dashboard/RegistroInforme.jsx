@@ -7,7 +7,7 @@ import { Link, useParams } from 'react-router-dom';
 
 export default function RegistroInforme() {
     const [datosCambios, setDatosCambios] = useState(null);
-    const token = localStorage.getItem("AUTH_TOKEN");
+    const {token} = useAdmin();
     const { registroID } = useParams();
 
     const registroQuery = async () => {

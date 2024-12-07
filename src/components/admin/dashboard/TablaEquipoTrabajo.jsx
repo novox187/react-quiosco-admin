@@ -35,9 +35,8 @@ const statusColorMap = {
 const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
 
 export default function TablaEquipoTrabajo() {
-    const { setEmployes, employes, onOpenVerEmployee, onOpenEditarEmployee, setEmployeeVer } = useAdmin();
+    const { setEmployes, employes, onOpenVerEmployee, onOpenEditarEmployee, setEmployeeVer,token } = useAdmin();
 
-    const token = localStorage.getItem("AUTH_TOKEN");
 
     const user = async () => {
         try {
