@@ -58,11 +58,10 @@ export default function Registro() {
       address: addressRef.current.value,
       hire_date: hireDateRef.current.value,
       username: usernameRef.current.value,
-      rol_id: rolSeleccionado.currentKey,
+      role_id: parseInt(rolSeleccionado.currentKey, 10),
       password: passwordRef.current.value,
       password_confirmation: passwordConfirmationRef.current.value
     }
-
     registro(datos, setErrores)
   }
 
