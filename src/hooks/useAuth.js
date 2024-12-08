@@ -115,6 +115,9 @@ export const useAuth = ({ middleware, url }) => {
         "/admin/categorias",
         "/admin/registro/:registroID",
         "/admin/cajas",
+        "/admin/mesero",
+        "/admin/cocinero",
+
       ],
       repartidor: ["/admin/repartidor"],
     }),
