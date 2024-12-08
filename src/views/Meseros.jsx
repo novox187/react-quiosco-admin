@@ -7,7 +7,7 @@ import { useState } from 'react';
 import ProductosMesero from '../components/admin/ProductosMesero';
 import ResumenFooterMesero from '../components/admin/ResumenFooterMesero';
 
-export default function Despacho() {
+export default function Meseros() {
     const [opcionMesero, setOpcionMesero] = useState('pedidos');
 
     useAuth({ middleware: 'despacho' });

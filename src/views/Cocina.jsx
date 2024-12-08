@@ -5,7 +5,7 @@ import { Button, Card } from "@nextui-org/react";
 import Usuario from "../components/Usuario";
 
 
-export default function Ordenes() {
+export default function Cocina() {
 
   useAuth({ middleware: 'ordenes' })
 

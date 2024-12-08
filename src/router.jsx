@@ -2,11 +2,10 @@ import { createBrowserRouter } from 'react-router-dom'
 import AdminLayout from './layouts/AdminLayout'
 import AuthLayout from './layouts/AuthLayout'
 import Login from './views/Login'
-import Ordenes from './views/Ordenes'
+import Cocina from './views/Cocina'
 import Productos from './views/Productos'
 import Categorias from './views/Categorias'
-import Registro from './views/Registro'
-import Despacho from './views/Despacho'
+import Meseros from './views/Meseros'
 import Errores from './views/Errores'
 import { AdminProvider } from './context/AdminProvider'
 import Dashboard from './views/admin/Dashboard'
@@ -32,11 +31,11 @@ const router = createBrowserRouter([
             },
             {
                 path: '/admin/cocinero',
-                element: <Ordenes />
+                element: <Cocina />
             },
             {
                 path: '/admin/mesero',
-                element: <Despacho />
+                element: <Meseros />
             },
             {
                 path: '/admin/repartidor',
