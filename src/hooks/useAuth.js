@@ -105,51 +105,52 @@ export const useAuth = ({ middleware, url }) => {
     }
   }, [mutate, setPedido, setUserActual, token]);
 
+  const RutasValidasPorRol = useMemo(
+    () => ({
+      admin: [
+        "/admin",
+        "/admin/resivos",
+        "/admin/productos",
+        "/admin/productos/contenedores",
+        "/admin/categorias",
+        "/admin/registro/:registroID",
+        "/admin/cajas",
+      ],
+      repartidor: ["/admin/repartidor"],
+    }),
+    []
+  );
+
   useEffect(() => {
     if (!redirected) {
+      // Si no hay usuario o rol
       if (!userActual || !userActual.rol) {
-        // Si no hay usuario o rol, permitir acceso a /register
         if (window.location.pathname === "/auth/registro") {
-          setRedirected(true); // Permitir acceso a /register
+          setRedirected(true); // Permitir acceso a /auth/registro
         } else {
-          // Redirigir a la raíz si no es /register
-          navigate("/");
+          navigate("/"); // Redirigir a la raíz si no es /auth/registro
           setRedirected(true);
         }
       } else {
-        // Redirigir según el rol
-        switch (userActual.rol) {
+        const rutasValidas = RutasValidasPorRol[userActual.rol] || [];
+        const esRutaValida = rutasValidas.some((ruta) => {
+          const regex = new RegExp(`^${ruta.replace(/:\w+/g, "\\w+")}$`);
+          return regex.test(window.location.pathname);
+        });
 
-          case "admin":
-            // Permitir acceso a cualquier ruta excepto a /admin/repartidor
-            if (
-              window.location.pathname === "/"
-            ) {
-              navigate("/admin"); // Redirigir a la raíz si intenta acceder a /admin/repartidor
-            } else {
-              setRedirected(true); // Permitir acceso a otras rutas
-            }
-            break;
-            case "repartidor":
-              if (pedidoEnCurso?.numero_pedido) {
-                // Si hay un pedido en curso, redirigir a la página del pedido
-                navigate(
-                  `/admin/repartidor/pedido/${pedidoEnCurso.numero_pedido}`
-                );
-              } else {
-                // Si no hay pedido en curso, redirigir a la página de repartidor
-                navigate("/admin/repartidor");
-              }
-              setRedirected(true);
-              break;
-
-          default:
-            navigate("/"); // En caso de que el rol no sea reconocido
-            break;
+        if (esRutaValida) {
+          setRedirected(true); // Permitir acceso si la ruta es válida
+        } else {
+          if (RutasValidasPorRol[userActual.rol]) {
+            navigate(RutasValidasPorRol[userActual.rol][0]); // Redirigir a la primera ruta válida del rol
+          } else {
+            navigate("/"); // Redirigir a la raíz si no hay rutas válidas
+          }
         }
       }
     }
-  }, [userActual, navigate, redirected, pedidoEnCurso]);
+  }, [userActual, navigate, redirected, pedidoEnCurso, RutasValidasPorRol]);
+  
 
   return {
     login,
