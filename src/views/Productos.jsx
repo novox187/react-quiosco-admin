@@ -157,11 +157,11 @@ export default function ProductosTable() {
                 return (
                     <Chip
                         className="capitalize"
-                        color={statusColorMap[producto?.disponible]}
+                        color={statusColorMap[producto.disponible]}
                         size="sm"
                         variant="flat"
                     >
-                        {producto?.disponible ? "Disponible" : "Agotado"}
+                        {producto.disponible ? "Disponible" : "Agotado"}
                     </Chip>
                 );
             case "descuento":
@@ -214,7 +214,7 @@ export default function ProductosTable() {
             default:
                 return producto[columnKey] || "-";
         }
-    }, [handleClickProductoAgotado, setModalEditarProducto, setProductoEditar, setProductoEliminar, setModalEliminarProducto, modalEditarProducto, modalEliminarProducto]);
+    }, [handleClickProductoAgotado, setModalEditarProducto, setProductoEditar, setProductoEliminar, setModalEliminarProducto, modalEditarProducto, modalEliminarProducto,productoQuery?.data]);
 
     const topContent = useMemo(() => {
         return (
@@ -224,7 +224,7 @@ export default function ProductosTable() {
                         isClearable
                         className="w-full sm:max-w-[44%]"
                         placeholder="Buscar por nombre..."
-                        startContent={<BuscarIcono />}
+                        startContent={<BuscarIcono className="size-5 text-white" />}
                         value={filterValue}
                         onClear={() => setFilterValue("")}
                         onValueChange={(value) => {
@@ -294,7 +294,7 @@ export default function ProductosTable() {
     }, [page, pages]);
 
     return (
-        <div className="flex flex-col gap-4 p-4 md:p-6 min-h-screen">
+        <div className="flex flex-col gap-4 p-4 md:p-6 min-h-screen mb-[5rem]">
             <div className="lg:w-full hidden lg:flex justify-end">
                 <Usuario />
             </div>
