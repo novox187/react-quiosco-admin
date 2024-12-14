@@ -92,5 +92,12 @@ export const generateGoogleMapsUrl = (positions) => {
   return `https://www.google.com/maps/dir/?api=1&origin=my+location&destination=${latB},${lngB}`;
 };
 
+    // Función para convertir segundos a formato MM:SS
+    export const formatTime = (timeInSeconds) => {
+      const minutes = Math.floor(timeInSeconds / 60);
+      const seconds = timeInSeconds % 60;
+      return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  };
+
 /* https://www.google.com/maps/dir/?api=1&origin=LATITUD_A,LONGITUD_A&destination=LATITUD_B,LONGITUD_B */
 

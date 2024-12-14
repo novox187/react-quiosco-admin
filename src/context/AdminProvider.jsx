@@ -68,15 +68,15 @@ const AdminProvider = ({ children }) => {
     } catch (error) {
         console.error("Error al parsear la cookie 'userData':", error);
     }
-    
+
     let userData = null;
     let token = null;
-    
+
     if (jsonString) {
         // Extraer el token y el resto de las propiedades
         ({ token, ...userData } = jsonString);
     }
-     
+
 
     /* ESTADOS  */
     const [productoQuery, setProductoQuery] = useState(null);
@@ -441,6 +441,7 @@ const AdminProvider = ({ children }) => {
             onAbrirCaja: (data) => console.log('desde el sokect', data),
             onCierreCaja: (data) => console.log('desde el sokect cierre', data),
             onFinalizarPedido: (data) => console.log('desde el sokect finalizar pedido', data),
+            onNotificarUsuario: (data) => console.log('desde el sokect notificar', data.mensaje),
         };
 
         // Registrar eventos de socket
@@ -1013,6 +1014,21 @@ const AdminProvider = ({ children }) => {
         }
     };
 
+    const handleNotificarUsuario = (correo, mensaje, idPedido) => {
+        const notificacion = {
+            email: correo,
+            payload:{
+                mensaje: mensaje,
+                idPedido: idPedido
+            } ,
+        }
+        try {
+            socketConnection.emit("onNotificarUsuario", notificacion);
+        } catch (error) {
+            console.error(error);
+        };
+    };
+
     return (
         <AdminContext.Provider
             value={{
@@ -1176,6 +1192,7 @@ const AdminProvider = ({ children }) => {
                 onOpenChangeAbrirCaja,
                 onCloseAbrirCaja,
                 userData,
+                handleNotificarUsuario,
             }}
         >
             {children}

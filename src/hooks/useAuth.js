@@ -119,7 +119,10 @@ export const useAuth = ({ middleware, url }) => {
         "/admin/cocinero",
 
       ],
-      repartidor: ["/admin/repartidor"],
+      repartidor: [
+        "/admin/repartidor",
+        '/admin/repartidor/pedido/:pedidoID',
+      ],
     }),
     []
   );
@@ -140,8 +143,12 @@ export const useAuth = ({ middleware, url }) => {
           const regex = new RegExp(`^${ruta.replace(/:\w+/g, "\\w+")}$`);
           return regex.test(window.location.pathname);
         });
-
-        if (esRutaValida) {
+  
+        // Verificar si hay un pedido en curso para el repartidor
+        if (userActual.rol === "repartidor" && pedidoEnCurso && pedidoEnCurso !== null) {
+          navigate(`/admin/repartidor/pedido/${pedidoEnCurso?.id}`);
+          setRedirected(true); // Evitar redirecciones múltiples
+        } else if (esRutaValida) {
           setRedirected(true); // Permitir acceso si la ruta es válida
         } else {
           if (RutasValidasPorRol[userActual.rol]) {
@@ -149,12 +156,12 @@ export const useAuth = ({ middleware, url }) => {
           } else {
             navigate("/"); // Redirigir a la raíz si no hay rutas válidas
           }
+          setRedirected(true);
         }
       }
     }
   }, [userActual, navigate, redirected, pedidoEnCurso, RutasValidasPorRol]);
   
-
   return {
     login,
     registro,

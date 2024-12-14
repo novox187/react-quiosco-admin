@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import Ingresos from "../../components/admin/dashboard/Ingresos"
 import GraficaEstadistica from '../../components/admin/dashboard/GraficaEstadistica'
-import { Card, ScrollShadow } from '@nextui-org/react'
+import { Button, Card, ScrollShadow } from '@nextui-org/react'
 import TablaProductosTop from '../../components/admin/dashboard/TablaProductosTop'
 import TablaUsuarios from '../../components/admin/dashboard/TablaUsuarios'
 import TablaEquipoTrabajo from '../../components/admin/dashboard/TablaEquipoTrabajo'
@@ -13,7 +13,7 @@ import TablaRegistro from "../../components/admin/dashboard/TablaRegistro"
 import useAdmin from "../../hooks/useAdmin"
 
 export default function Dashboard() {
-  const {token} = useAdmin();
+  const {token, handleNotificarUsuario} = useAdmin();
   /* PANEL */
   const [datosPanel, setDatosPanel] = useState()
 
@@ -41,6 +41,11 @@ export default function Dashboard() {
     <div className="flex flex-col justify-center items-center space-y-4 mb-[8rem]  mx-auto">
       <div className=" lg:w-full hidden lg:flex justify-end  lg:mr-10">
         <Usuario />
+      </div>
+      <div>
+        <Button
+        onPress={() => handleNotificarUsuario('novoxdeveloper@gmail.com', 'Hola esto es una prueba')}
+        >Notificar</Button>
       </div>
       <ScrollShadow orientation='horizontal' className={`flex flex-row  space-x-3 overflow-auto w-[95%] z-0`}>
         <Ingresos datos={datosPanel?.ingresoHoy} />
