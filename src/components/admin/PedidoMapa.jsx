@@ -6,6 +6,9 @@ import useAdmin from '../../hooks/useAdmin';
 import ModalDetallesPedidoEntrega from './ModalDetallesPedidoEntrega';
 import { useAuth } from '../../hooks/useAuth';
 import ModalConfirmarCancelarEntrega from './ModalConfirmarCancelarEntrega';
+import clienteAxios from '../../config/axios';
+import Cookies from 'js-cookie';
+import { toast } from 'react-toastify';
 
 export default function PedidoMapa() {
     useAuth({ middleware: 'pedidoEnCurso' });
@@ -16,20 +19,20 @@ export default function PedidoMapa() {
         cancelarPedido,
         isOpenConfirmarCancelarEntrega,
         onOpenConfirmarCancelarEntrega,
-        onOpenChangeConfirmarCancelarEntrega,
         setLoadingCancelarPedido,
         loadingCancelarPedido,
         setLoadingFinalizarPedido,
         loadingFinalizarPedido,
         finalizarPedido,
-        handleNotificarUsuario
+        setPedidoEnCurso,
+        token,
+        socketConnection
     } = useAdmin();
 
     const [positions, setPositions] = useState(null); // Inicialmente null
     const [coordenadasObtenidas, setCoordenadasObtenidas] = useState(false);
 
-    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-    const [countdown, setCountdown] = useState(0);
+    const [loadingEnelPuntoEntrega, setLoadingEnelPuntoEntrega] = useState(false);
 
     useEffect(() => {
         const obtenerUbicacionActual = () => {
@@ -79,17 +82,6 @@ export default function PedidoMapa() {
         }
     }, [pedidoEnCurso]);
 
-    useEffect(() => {
-        let timer;
-        if (countdown > 0) {
-            timer = setTimeout(() => {
-                setCountdown((prevCountdown) => prevCountdown - 1);
-            }, 1000);
-        } else if (countdown === 0 && isButtonDisabled) {
-            setIsButtonDisabled(false);
-        }
-        return () => clearTimeout(timer);
-    }, [countdown, isButtonDisabled]);
 
     // Mostrar "Cargando..." hasta que `pedidoEnCurso` y `positions` estén listos
     if (!pedidoEnCurso || !positions) {
@@ -106,16 +98,35 @@ export default function PedidoMapa() {
         await finalizarPedido(pedidoEnCurso?.id);
     };
 
-    const handleNotifyUser = () => {
-        handleNotificarUsuario(
-            pedidoEnCurso?.user?.email,
-            `El repartidor está en el punto de entrega de su pedido ${pedidoEnCurso.numero_pedido}`,
-            pedidoEnCurso?.id
-        );
-        setIsButtonDisabled(true);
-        setCountdown(60);
-    };
-
+    const handleClickEnElPuntoEntrega = async () => {
+        setLoadingEnelPuntoEntrega(true)
+        try {
+            const { data } = await clienteAxios.patch(`/api/pedidos/repartidor/enpuntoentrega/${pedidoEnCurso?.id}`, {}, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                },
+            });
+            Cookies.set("pedidoEnCurso", JSON.stringify(data.data), { expires: 2 });
+            setPedidoEnCurso(data.data);
+            const notificacion = {
+                email: pedidoEnCurso?.user?.email,
+                payload: {
+                    mensaje: "El repartidor se encuentra en el punto de entrega",
+                    idPedido: pedidoEnCurso?.id,
+                    tipo: 'enElPuntoEntrega'
+                },
+            }
+            socketConnection.emit("onNotificarUsuario", notificacion)
+            toast.success('Se ha enviado la notificación al usuario, espera a que lo reciba, si demora contacta al usuario con el número de teléfono')
+        } catch (error) {
+            setLoadingEnelPuntoEntrega(false)
+            console.log(error)
+        }
+        finally {
+            setLoadingEnelPuntoEntrega(false)
+        }
+    }
     return (
         <>
             <div className="w-full space-y-5" style={{ height: 'calc(100dvh - 10rem)' }}>
@@ -129,21 +140,24 @@ export default function PedidoMapa() {
                     </div>
                 </Card>
                 <div className="flex flex-col space-y-5">
-                    <Button
-                        className="m-auto w-full bg-zinc-900"
-                        onPress={handleNotifyUser}
-                        isDisabled={isButtonDisabled}
-                        isLoading={loadingFinalizarPedido}
-                    >
-                        {isButtonDisabled ? `Esperar ${formatTime(countdown)}` : 'Notificar al usuario'}
-                    </Button>
-                    <Button
-                        className="m-auto w-full bg-zinc-900"
-                        onPress={handleClickFinalizarPedido}
-                        isLoading={loadingFinalizarPedido}
-                    >
-                        {loadingFinalizarPedido ? '' : 'Finalizar Pedido'}
-                    </Button>
+                    {pedidoEnCurso.en_punto_entrega === 1
+                        ?
+                        <Button
+                            className="m-auto w-full bg-zinc-900"
+                            onPress={handleClickFinalizarPedido}
+                            isLoading={loadingFinalizarPedido}
+                        >
+                            {loadingFinalizarPedido ? '' : 'Finalizar Pedido'}
+                        </Button>
+                        :
+                        <Button
+                            className="m-auto w-full bg-zinc-900"
+                            onPress={handleClickEnElPuntoEntrega}
+                            isLoading={loadingEnelPuntoEntrega}
+                        >
+                            Llegue al punto de entrega
+                        </Button>
+                    }
                     <Button
                         className="m-auto w-full bg-zinc-900"
                         onPress={handleClickCancelarPedido}

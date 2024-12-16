@@ -525,7 +525,8 @@ const AdminProvider = ({ children }) => {
                     payload: {
                         mensaje: "",
                         idPedido: datos.idPedido,
-                        estadoPedido: datos.estado
+                        estadoPedido: datos.estado,
+                        tipo:'cambioEstadoPedido'
                     },
                 }
                 if (datos.estado === 0) {
