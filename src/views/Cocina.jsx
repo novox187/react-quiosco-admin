@@ -61,6 +61,16 @@ export default function Cocina() {
     return estrellas;
   };
 
+  const pedidoPreparado = (id,estado,correo,numeroPedido) => {
+    const datos = {
+      idPedido: id,
+      estado: estado,
+      correo: correo,
+      numeroPedido: numeroPedido,
+  }
+    handleClickCompletarPedido(datos);
+  }
+
 
   if (!pedidosQuery) {
     return (
@@ -175,7 +185,7 @@ export default function Cocina() {
                       isDisabled={loadingCompletarPedido}
                       onClick={() => {
                         if (!loadingCompletarPedido) {
-                          handleClickCompletarPedido(pedido.id, 1)
+                          pedidoPreparado(pedido.id, 1, pedido?.user?.email, pedido?.numero_pedido);
                         }
                       }}
                     >

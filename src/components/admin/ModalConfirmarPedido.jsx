@@ -23,7 +23,6 @@ export default function ModalConfirmarPedido() {
     useEffect(() => {
         calcularVuelto();
     }, [dineroCliente, precioPedido.total])
-
     const handleClickCerrar = () => {
         setModalConfirmarPedido(false)
         setLoadingConfirmarPedidoModal(false)
@@ -31,7 +30,15 @@ export default function ModalConfirmarPedido() {
 
     const handleClickVerificarPago = () => {
         if (parseFloat(dineroCliente) >= parseFloat(precioPedido.total.toFixed(2))) {
-            handleClickCompletarPedido(precioPedido.id, precioPedido.estado, dineroCliente, 'efectivo')
+            const datos = {
+                idPedido: precioPedido.id,
+                estado:precioPedido.estado,
+                dineroCliente: dineroCliente,
+                correo: precioPedido?.correo,
+                numeroPedido: precioPedido?.numeroPedido,
+                pago: 'efectivo'
+            }
+            handleClickCompletarPedido(datos)
             setLoadingConfirmarPedidoModal(true)
         } else {
             toast.warning('El precio del pedido es de ' + precioPedido.total.toFixed(2))
@@ -88,7 +95,7 @@ export default function ModalConfirmarPedido() {
                     onClick={handleClickVerificarPago}
                     className=' font-bold uppercase'
                     isDisabled={loadingConfirmarPedidoModal}
-                    >
+                >
                     {loadingConfirmarPedidoModal ? (
                         <svg className="mr-3 h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>

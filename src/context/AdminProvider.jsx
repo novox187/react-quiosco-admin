@@ -491,24 +491,24 @@ const AdminProvider = ({ children }) => {
     }
 
     /* COMPLETAR PEDIDO */
-    const handleClickCompletarPedido = async (id, variable, dineroCliente, pago) => {
-        if (variable === 0) {
-            setLoadingConfirmarPedido(id);
+    const handleClickCompletarPedido = async (datos) => {
+        if (datos.estado === 0) {
+            setLoadingConfirmarPedido(datos.idPedido);
         }
-        if (variable === 1) {
-            setLoadingCompletarPedido(id);
+        if (datos.estado === 1) {
+            setLoadingCompletarPedido(datos.idPedido);
         }
-        if (variable === 2) {
-            setLoadingEntregarPedido(id);
+        if (datos.estado === 2) {
+            setLoadingEntregarPedido(datos.idPedido);
         }
         if (userData) {
             try {
                 const { data } = await clienteAxios.put(
-                    `/api/pedidos/actualizar/${id}`,
+                    `/api/pedidos/actualizar/${datos.idPedido}`,
                     {
-                        identificador: variable,
-                        dineroCliente: dineroCliente,
-                        pago: pago
+                        identificador: datos.estado,
+                        dineroCliente: datos?.dineroCliente,
+                        pago: datos?.pago
                     },
                     {
                         headers: {
@@ -520,30 +520,42 @@ const AdminProvider = ({ children }) => {
                 socketConnection.emit("onPedido", data)
                 socketConnection.emit("onRegistro", data.registro)
 
-                if (variable === 0) {
+                const notificacion = {
+                    email: datos.correo,
+                    payload: {
+                        mensaje: "",
+                        idPedido: datos.idPedido,
+                        estadoPedido: datos.estado
+                    },
+                }
+                if (datos.estado === 0) {
                     toast.success("El pedido esta en proceso");
                     setLoadingConfirmarPedido(false);
                     setLoadingConfirmarPedidoModal(false)
                     setModalConfirmarPedido(false)
                     setPrecioPedido({})
+                    notificacion.payload.mensaje = "Se a confirmado tu pedido "+datos.numeroPedido;
                 }
-                if (variable === 1) {
+                if (datos.estado === 1) {
                     toast.success("pedido Preparada");
                     setLoadingCompletarPedido(false);
+                    notificacion.payload.mensaje = "Tu pedido "+datos.numeroPedido+ " Esta listo para ser entregado.";
                 }
-                if (variable === 2) {
+                if (datos.estado === 2) {
                     toast.success("pedido Entregada");
                     setLoadingEntregarPedido(false);
+                    notificacion.payload.mensaje = "Muchas gracias por tu compra.";
                 }
+                socketConnection.emit("onNotificarUsuario", notificacion)
             } catch (error) {
                 console.error(error);
-                if (variable === 0) {
+                if (datos.estado === 0) {
                     setLoadingConfirmarPedido(false);
                 }
-                if (variable === 1) {
+                if (datos.estado === 1) {
                     setLoadingCompletarPedido(false);
                 }
-                if (variable === 2) {
+                if (datos.estado === 2) {
                     setLoadingEntregarPedido(false);
                 }
             }
@@ -1017,10 +1029,10 @@ const AdminProvider = ({ children }) => {
     const handleNotificarUsuario = (correo, mensaje, idPedido) => {
         const notificacion = {
             email: correo,
-            payload:{
+            payload: {
                 mensaje: mensaje,
                 idPedido: idPedido
-            } ,
+            },
         }
         try {
             socketConnection.emit("onNotificarUsuario", notificacion);

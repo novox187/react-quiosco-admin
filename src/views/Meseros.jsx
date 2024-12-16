@@ -42,6 +42,16 @@ export default function Meseros() {
         ))
         : productoQuery?.data;
 
+    const entregarPedido = (id,estado,correo,numeroPedido) => {
+        const datos = {
+            idPedido: id,
+            estado: estado,
+            correo: correo,
+            numeroPedido: numeroPedido,
+        }
+        handleClickCompletarPedido(datos);
+    }
+
     if (!pedidosQuery) {
         return (
             <div className='w-ful h-full flex flex-col justify-center items-center pt-5'>
@@ -55,7 +65,7 @@ export default function Meseros() {
         );
     }
 
-    const pedidosIncompletos = pedidosQuery?.pedidos.filter(pedido => pedido.estado === 0 || pedido.pago === 'transferencia');
+    const pedidosIncompletos = pedidosQuery?.pedidos.filter(pedido => pedido.estado !== 3 && pedido.lugar === 'recoger' );
 
     const PedidosFiltrados = busquedaPedidos
         ? pedidosIncompletos?.filter(pedido => {
@@ -63,7 +73,6 @@ export default function Meseros() {
                 pedido.user.name.toLowerCase().includes(busquedaPedidos.toLowerCase()) ||
                 pedido.numero_pedido.includes(busquedaPedidos) ||
                 pedido.mesa == busquedaPedidos ||
-                pedido.user.rol[0] === busquedaPedidos ||
                 (busquedaPedidos === "confirmar" && pedido.estado === 0) ||
                 (busquedaPedidos === "proceso" && pedido.estado === 1) ||
                 (busquedaPedidos === "listo" && pedido.estado === 2)
@@ -99,8 +108,8 @@ export default function Meseros() {
         return estrellas;
     };
 
-    const handleClickVerificarPedido = (id, estado, correo, total) => {
-        setPrecioPedido({ total, id, estado, correo });
+    const handleClickVerificarPedido = (id, estado, correo, numeroPedido, total) => {
+        setPrecioPedido({ total, id, estado, correo, numeroPedido });
         setModalConfirmarPedido(!modalConfirmarPedido);
     };
 
@@ -279,10 +288,10 @@ export default function Meseros() {
                                         isDisabled={loadingConfirmarPedido || loadingEntregarPedido}
                                         onClick={() => {
                                             if (pedido.estado === 0) {
-                                                handleClickVerificarPedido(pedido.id, 0, 'novox187@gmail.com', pedido.total);
+                                                handleClickVerificarPedido(pedido.id, 0, pedido?.user?.email, pedido?.numero_pedido, pedido.total,);
                                             }
                                             if (pedido.estado === 2) {
-                                                handleClickCompletarPedido(pedido.id, 2, 'novox187@gmail.com');
+                                                entregarPedido(pedido.id, 2, pedido?.user?.email, pedido?.numero_pedido);
                                             }
                                         }}
                                     >
