@@ -4,13 +4,13 @@ import { RouterProvider } from 'react-router-dom'
 import router from './router'
 import './index.css'
 import { GeneralProvider } from './context/GeneralProvider'
-import { NextUIProvider } from '@nextui-org/react'
+import { HeroUIProvider } from '@heroui/react'
 import 'leaflet/dist/leaflet.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <GeneralProvider>
-        <NextUIProvider>
+        <HeroUIProvider>
             <RouterProvider router={router} />
-        </NextUIProvider>
+        </HeroUIProvider>
     </GeneralProvider>
 )

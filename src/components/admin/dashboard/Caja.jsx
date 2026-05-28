@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import ApexCharts from 'apexcharts';
-import { Card, CardBody, Skeleton, Button } from "@nextui-org/react"
+import { Card, CardBody, Skeleton, Button } from "@heroui/react"
 import { formatearDinero } from "../../../helpers"
 import useAdmin from "../../../hooks/useAdmin";
 import clienteAxios from "../../../config/axios";

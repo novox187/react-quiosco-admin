@@ -1,7 +1,7 @@
 import { useState } from "react";
 import useAdmin from "../hooks/useAdmin";
 import { formatearTextoVista } from "../helpers";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 
 export default function ModalMoverProducto() {
     const { setModalMoverProducto, modalMoverProducto, productoMover, categorias, moverProducto, loadingMoverProducto, setLoadingMoverProducto } = useAdmin();

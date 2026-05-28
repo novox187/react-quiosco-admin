@@ -2,7 +2,7 @@ import { createRef, useState } from 'react'
 import Alerta from '../components/Alerta';
 import { useAuth } from '../hooks/useAuth';
 import BotonCarga from '../components/BotonCarga';
-import { Input } from '@nextui-org/react';
+import { Input } from '@heroui/react';
 
 export default function Registro() {
 

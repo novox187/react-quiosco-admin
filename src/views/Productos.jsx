@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import useAdmin from '../hooks/useAdmin';
 import ProductosAdmin from '../components/admin/ProductosAdmin';
-import { Button, Input } from '@nextui-org/react';
+import { Button, Input } from '@heroui/react';
 import Usuario from '../components/Usuario';
 
 

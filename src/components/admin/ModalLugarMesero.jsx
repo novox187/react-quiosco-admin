@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Alerta from '../Alerta';
 import useAdmin from '../../hooks/useAdmin';
 import useGeneralContext from '../../hooks/useGeneralContext';
-import { Button } from '@nextui-org/react';
+import { Button } from '@heroui/react';
 
 export default function ModalLugarMesero() {
 

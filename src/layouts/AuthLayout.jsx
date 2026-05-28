@@ -1,4 +1,4 @@
-import { Image } from '@nextui-org/react';
+import { Image } from '@heroui/react';
 import { Outlet, Link } from 'react-router-dom'
 import { useLocation } from 'react-router-dom';
 

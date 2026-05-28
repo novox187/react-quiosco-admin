@@ -1,6 +1,6 @@
 import { useState } from "react";
 import useAdmin from "../hooks/useAdmin";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 
 export default function ModalEliminarProducto() {
     const { modalEliminarProducto, setModalEliminarProducto, productoEliminar, eliminarProducto, loginEliminarProducto, setLoginEliminarProducto } = useAdmin();

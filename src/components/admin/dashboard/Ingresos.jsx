@@ -1,4 +1,4 @@
-import { Card, CardBody, Chip, Skeleton } from "@nextui-org/react"
+import { Card, CardBody, Chip, Skeleton } from "@heroui/react"
 import { formatearDinero } from "../../../helpers"
 export default function Ingresos({ datos }) {
     if (!datos) {

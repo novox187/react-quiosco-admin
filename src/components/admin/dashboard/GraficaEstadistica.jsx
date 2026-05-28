@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import ApexCharts from 'apexcharts';
-import { Card, Skeleton } from '@nextui-org/react';
+import { Card, Skeleton } from '@heroui/react';
 
 export default function GraficaEstadistica({ datos }) {
   if (!datos) {

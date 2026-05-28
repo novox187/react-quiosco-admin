@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import Ingresos from "../../components/admin/dashboard/Ingresos"
 import GraficaEstadistica from '../../components/admin/dashboard/GraficaEstadistica'
-import { Card } from '@nextui-org/react'
+import { Card } from '@heroui/react'
 import TablaProductosTop from '../../components/admin/dashboard/TablaProductosTop'
 import TablaUsuarios from '../../components/admin/dashboard/TablaUsuarios'
 import TablaEquipoTrabajo from '../../components/admin/dashboard/TablaEquipoTrabajo'

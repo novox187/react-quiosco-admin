@@ -1,4 +1,4 @@
-import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Textarea } from '@nextui-org/react'
+import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Textarea } from '@heroui/react'
 import React, { createRef, useRef, useState } from 'react'
 import MapaVista from './MapaLeaflet/MapaVista'
 import useQuiosco from '../hooks/useQuiosco';

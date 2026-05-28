@@ -2,7 +2,7 @@ import useAdmin from '../../hooks/useAdmin';
 import { formatearDinero } from '../../helpers';
 import { formatearTextoVista } from '../../helpers';
 import { useState } from 'react';
-import { Image, Card, Chip, Button } from '@nextui-org/react';
+import { Image, Card, Chip, Button } from '@heroui/react';
 
 export default function ProductosAdmin({ producto }) {
 

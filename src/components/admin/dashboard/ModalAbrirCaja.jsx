@@ -1,6 +1,6 @@
 import { useState,useEffect } from 'react';
 import useAdmin from '../../../hooks/useAdmin'
-import { Button, Input } from '@nextui-org/react';
+import { Button, Input } from '@heroui/react';
 import clienteAxios from '../../../config/axios';
 
 export default function ModalAbrirCaja() {

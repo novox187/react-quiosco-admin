@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, CardFooter, CardHeader } from '@nextui-org/react';
+import { Button, Card, CardBody, CardFooter, CardHeader } from '@heroui/react';
 import React, { useEffect, useState } from 'react';
 import { formatearDinero } from '../../helpers';
 import axios from 'axios';

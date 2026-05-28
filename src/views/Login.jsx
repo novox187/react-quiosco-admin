@@ -1,7 +1,7 @@
 import { createRef, useState } from 'react'
 import Alerta from '../components/Alerta';
 import { useAuth } from '../hooks/useAuth';
-import { Button, Input } from '@nextui-org/react';
+import { Button, Input } from '@heroui/react';
 import BotonCarga from '../components/BotonCarga';
 
 export default function Login() {

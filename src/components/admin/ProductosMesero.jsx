@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardBody, Image, Button, Chip } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, Image, Button, Chip } from "@heroui/react";
 import { formatearTextoVista } from "../../helpers";
 import { formatearDinero } from "../../helpers";
 import useAdmin from "../../hooks/useAdmin";

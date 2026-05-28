@@ -21,7 +21,7 @@ import {
     Spinner,
     Chip,
     spinner
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { formatearFecha } from '../../helpers';
 import { toast } from 'react-toastify';
 

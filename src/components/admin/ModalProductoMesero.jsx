@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Card, Image, Chip } from '@nextui-org/react';
+import { Card, Image, Chip } from '@heroui/react';
 import OpcionesProducto from '../OpcionesProducto';
 import { formatearDinero, formatearTextoVista } from '../../helpers';
 import useAdmin from '../../hooks/useAdmin';

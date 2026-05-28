@@ -2,7 +2,7 @@ import useAdmin from "../hooks/useAdmin"
 import Acordion from "../components/Acordion"
 import { useAuth } from "../hooks/useAuth";
 import Usuario from "../components/Usuario";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 
 export default function Categorias() {
 

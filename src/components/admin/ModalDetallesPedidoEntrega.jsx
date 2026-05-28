@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react'
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/react'
 import { formatearDinero } from '../../helpers';
 import useAdmin from '../../hooks/useAdmin';
 

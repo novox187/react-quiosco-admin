@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap, ZoomControl } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Chip } from '@nextui-org/react';
+import { Chip } from '@heroui/react';
 
 function RouteCalculator({ start, end }) {
     const [route, setRoute] = useState(null);

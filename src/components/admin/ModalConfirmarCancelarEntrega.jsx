@@ -1,5 +1,5 @@
 import React from 'react'
-import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure} from "@nextui-org/react";
+import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure} from "@heroui/react";
 import useAdmin from '../../hooks/useAdmin';
 export default function ModalConfirmarCancelarEntrega({isOpen, onOpenChange}) {
   return (

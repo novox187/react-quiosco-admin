@@ -1,7 +1,7 @@
 import React from 'react'
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react'
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@heroui/react'
 import { formatearTextoVista } from '../../../helpers'
-import { Card, Skeleton } from '@nextui-org/react'
+import { Card, Skeleton } from '@heroui/react'
 import useAdmin from '../../../hooks/useAdmin'
 
 export default function TablaProductosTop({ datos }) {

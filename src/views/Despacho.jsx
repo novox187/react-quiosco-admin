@@ -1,7 +1,7 @@
 import useAdmin from '../hooks/useAdmin'
 import { formatearDinero } from '../helpers'
 import { useAuth } from '../hooks/useAuth'
-import { Button, Card, Chip, Input } from '@nextui-org/react'
+import { Button, Card, Chip, Input } from '@heroui/react'
 import Usuario from '../components/Usuario'
 import { useState } from 'react'
 import ProductosMesero from '../components/admin/ProductosMesero'

@@ -2,7 +2,7 @@ import React from 'react'
 import { useAuth } from "../hooks/useAuth"
 import useGeneralContext from "../hooks/useGeneralContext";
 import { formatearTextoVista } from "../helpers";
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, User, DropdownSection } from "@nextui-org/react";
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, User, DropdownSection } from "@heroui/react";
 import RelojIcon from './icons/RelojIcon';
 import EntrarIcon from './icons/EntrarIcon';
 import { Link } from 'react-router-dom';

@@ -4,7 +4,7 @@ import { formatearTextoDB } from '../helpers';
 import useAdmin from "../hooks/useAdmin";
 import BotonCarga from "./BotonCarga";
 import { formatoNombreImg } from "../helpers";
-import { Input } from "@nextui-org/react";
+import { Input } from "@heroui/react";
 
 
 export default function ModalCreateCategoria() {

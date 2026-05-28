@@ -4,7 +4,7 @@ import clienteAxios from "../config/axios";
 import socketio from "socket.io-client";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useDisclosure } from "@nextui-org/react";
+import { useDisclosure } from "@heroui/react";
 const AdminContext = createContext();
 
 
@@ -34,10 +34,12 @@ const AdminProvider = ({ children }) => {
     // Obtener el token y los datos del usuario desde las cookies
     const jsonString = Cookies.get('userData');
     let userData = null;
-    try {
-        userData = JSON.parse(jsonString);
-    } catch (error) {
-        console.error("Error parsing userData cookie:", error);
+    if (jsonString) {
+        try {
+            userData = JSON.parse(jsonString);
+        } catch (error) {
+            console.error("Error parsing userData cookie:", error);
+        }
     }
     const token = userData?.token || localStorage.getItem("AUTH_TOKEN");
 

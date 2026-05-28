@@ -1,6 +1,6 @@
 import React from 'react';
 import { createRef, useState, useEffect } from 'react'
-import { Input, Select, SelectItem } from '@nextui-org/react';
+import { Input, Select, SelectItem } from '@heroui/react';
 import { formatearDinero, formatearTextoVista } from "../helpers";
 import Alerta from '../components/Alerta';
 import { formatearTextoDB } from '../helpers';

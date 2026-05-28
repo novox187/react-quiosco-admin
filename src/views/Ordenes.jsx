@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import useAdmin from "../hooks/useAdmin";
 import { useAuth } from "../hooks/useAuth";
-import { Button, Card } from "@nextui-org/react";
+import { Button, Card } from "@heroui/react";
 import Usuario from "../components/Usuario";
 import clienteAxios from "../config/axios";
 

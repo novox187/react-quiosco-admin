@@ -16,7 +16,7 @@ import {
     Chip,
     User,
     Pagination,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { columns, statusOptions } from "../../../data/data";
 
 const statusColorMap = {

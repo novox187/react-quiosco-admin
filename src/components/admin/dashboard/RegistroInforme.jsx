@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import useAdmin from '../../../hooks/useAdmin';
-import { Button } from '@nextui-org/react';
+import { Button } from '@heroui/react';
 import { formatearDinero, formatearFecha } from '../../../helpers';
 import clienteAxios from '../../../config/axios';
 import { Link, useParams } from 'react-router-dom';

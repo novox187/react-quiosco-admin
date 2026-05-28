@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { Select, SelectItem } from "@nextui-org/react";
+import { Select, SelectItem } from "@heroui/react";
 import { createRef } from "react";
 import Alerta from "./Alerta";
 import clienteAxios from '../config/axios';
 import { formatearTextoDB, formatearTextoVista } from "../helpers";
 import useAdmin from "../hooks/useAdmin";
-import { Card, Image, Textarea } from "@nextui-org/react";
+import { Card, Image, Textarea } from "@heroui/react";
 import BotonCarga from "./BotonCarga";
 import TipoSelect from "./admin/TipoSelect";
 

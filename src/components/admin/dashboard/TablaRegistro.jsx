@@ -17,7 +17,7 @@ import {
     Chip,
     Pagination,
     Spinner,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { columns, statusOptions } from "../../../data/data3";
 import { formatearTextoVista } from "../../../helpers";
 import useAdmin from "../../../hooks/useAdmin";

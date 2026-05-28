@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import useAdmin from '../../hooks/useAdmin'
-import { Button, Input } from '@nextui-org/react';
+import { Button, Input } from '@heroui/react';
 import { toast } from 'react-toastify';
 
 export default function ModalConfirmarPedido() {
