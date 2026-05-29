@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback } from "react";
 import useSWR from "swr";
 import { useNavigate } from "react-router-dom";
 import clienteAxios from "../config/axios";
@@ -7,11 +7,38 @@ import useGeneralContext from "./useGeneralContext";
 import Cookies from "js-cookie";
 import useAdmin from "./useAdmin";
 
-export const useAuth = ({ middleware, url }) => {
+/**
+ * Mapea el primer rol del array roles[] de v1 al string `rol` que esperan
+ * los componentes del admin legacy. Evita refactorizar todos los switches
+ * que aún dependen de `userActual.rol`.
+ */
+function normalizarUsuario(userV1) {
+  if (!userV1) return null;
+  const roles = userV1.roles || [];
+  const rolPrincipal =
+    roles.find((r) => r === "superadmin" || r === "gerente") ||
+    roles[0] ||
+    null;
+
+  return {
+    ...userV1,
+    name: userV1.nombre,
+    first_name: userV1.nombre,
+    last_name: userV1.apellido,
+    rol:
+      rolPrincipal === "superadmin" || rolPrincipal === "gerente"
+        ? "admin"
+        : rolPrincipal,
+    rol_original: rolPrincipal,
+    id_user: userV1.id,
+  };
+}
+
+export const useAuth = ({ middleware, url } = {}) => {
   const navigate = useNavigate();
   const [loadingRegistro, setLoadingRegistro] = useState(false);
   const [loadingLogin, setLoadingLogin] = useState(false);
-  const [redirected, setRedirected] = useState(false); // Estado para rastrear si ya se ha redirigido
+  const [redirected, setRedirected] = useState(false);
   const {
     setUserActivo,
     modalAuth,
@@ -22,44 +49,46 @@ export const useAuth = ({ middleware, url }) => {
   } = useGeneralContext();
 
   const { pedidoEnCurso } = useAdmin();
-
   const token = localStorage.getItem("AUTH_TOKEN");
 
   const fetcher = useCallback(async () => {
-    const response = await clienteAxios("/api/employees/session", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
+    if (!token) return null;
+    const response = await clienteAxios.get("/auth/me");
+    return normalizarUsuario(response.data);
   }, [token]);
 
-  const {
-    data: user,
-    error,
-    mutate,
-  } = useSWR("/api/employees/session", fetcher);
+  const { data: user, error, mutate } = useSWR(
+    token ? "/auth/me" : null,
+    fetcher
+  );
 
   const login = useCallback(
     async (datos, setErrores) => {
       setErrores([]);
       setLoadingLogin(true);
       try {
-        const { data } = await clienteAxios.post("/api/employee/login", datos);
+        const { data } = await clienteAxios.post("/auth/login", datos);
         localStorage.setItem("AUTH_TOKEN", data.token);
         localStorage.setItem("USER", datos.email);
+
+        const u = normalizarUsuario(data.user);
         setErrores([]);
         setModalAuth(!modalAuth);
-        toast.success(`Bienvenido ${data?.name}`);
-        setUserActual(data);
-        Cookies.set("userData", JSON.stringify(data), { expires: 2 });
+        toast.success(`Bienvenido ${u.nombre}`);
+        setUserActual(u);
+        Cookies.set("userData", JSON.stringify(u), { expires: 2 });
         await mutate();
         setUserActivo(true);
-        setLoadingLogin(false);
-        setRedirected(false); // Reiniciar el estado de redirección
+        setRedirected(false);
       } catch (error) {
         console.error(error);
-        setErrores(Object.values(error.response.data.errors));
+        const errores = error.response?.data?.errors;
+        setErrores(
+          errores
+            ? Object.values(errores)
+            : [error.response?.data?.message || "Error de login"]
+        );
+      } finally {
         setLoadingLogin(false);
       }
     },
@@ -71,24 +100,36 @@ export const useAuth = ({ middleware, url }) => {
       setErrores([]);
       setLoadingRegistro(true);
       try {
-        const { data } = await clienteAxios.post(
-          "/api/employee/register",
-          datos
-        );
+        // El admin envía {first_name, last_name, email, password, password_confirmation}
+        // v1 espera {nombre, apellido, ...}
+        const body = {
+          nombre: datos.first_name ?? datos.nombre,
+          apellido: datos.last_name ?? datos.apellido,
+          email: datos.email,
+          telefono: datos.telefono,
+          password: datos.password,
+          password_confirmation: datos.password_confirmation,
+        };
+        const { data } = await clienteAxios.post("/auth/register", body);
         localStorage.setItem("AUTH_TOKEN", data.token);
-        setErrores([]);
-        toast.success(
-          `Bienvenido ${data?.employee?.first_name} ${data?.employee?.last_name}`
-        );
-        setUserActual(data.employee);
-        await mutate();
         localStorage.setItem("USER", datos.email);
+
+        const u = normalizarUsuario(data.user);
+        toast.success(`Bienvenido ${u.nombre} ${u.apellido ?? ""}`);
+        setUserActual(u);
+        Cookies.set("userData", JSON.stringify(u), { expires: 2 });
+        await mutate();
         setModalAuth(!modalAuth);
         setUserActivo(true);
-        setLoadingRegistro(false);
-        setRedirected(false); // Reiniciar el estado de redirección
+        setRedirected(false);
       } catch (error) {
-        setErrores(Object.values(error.response.data.errors));
+        const errores = error.response?.data?.errors;
+        setErrores(
+          errores
+            ? Object.values(errores)
+            : [error.response?.data?.message || "Error de registro"]
+        );
+      } finally {
         setLoadingRegistro(false);
       }
     },
@@ -97,68 +138,60 @@ export const useAuth = ({ middleware, url }) => {
 
   const logout = useCallback(async () => {
     try {
-      await clienteAxios.post("/api/logout", null, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await clienteAxios.post("/auth/logout");
+    } catch (e) {
+      // Si el token ya está expirado, no bloqueamos el logout local
+    } finally {
       localStorage.removeItem("AUTH_TOKEN");
       localStorage.removeItem("USER");
       Cookies.remove("userData");
-      setUserActual([]);
-      window.location.reload();
-      await mutate(undefined);
+      setUserActual(null);
       setPedido([]);
-      setRedirected(false); // Reiniciar el estado de redirección
-    } catch (error) {
-      console.log("algo salio mal");
+      await mutate(undefined);
+      setRedirected(false);
+      window.location.reload();
     }
-  }, [mutate, setPedido, setUserActual, token]);
+  }, [mutate, setPedido, setUserActual]);
 
   useEffect(() => {
-    if (!redirected) {
-      if (!userActual || !userActual.rol) {
-        // Si no hay usuario o rol, permitir acceso a /register
-        if (window.location.pathname === "/auth/registro") {
-          setRedirected(true); // Permitir acceso a /register
+    if (redirected) return;
+
+    if (!userActual || !userActual.rol) {
+      if (window.location.pathname === "/auth/registro") {
+        setRedirected(true);
+      } else {
+        navigate("/");
+        setRedirected(true);
+      }
+      return;
+    }
+
+    switch (userActual.rol) {
+      case "admin":
+        if (
+          [
+            "/admin/repartidor",
+            "/admin/cocinero",
+            "/admin/mesero",
+            "/",
+          ].includes(window.location.pathname)
+        ) {
+          navigate("/admin");
         } else {
-          // Redirigir a la raíz si no es /register
-          navigate("/");
           setRedirected(true);
         }
-      } else {
-        // Redirigir según el rol
-        switch (userActual.rol) {
-          case "admin":
-            // Permitir acceso a cualquier ruta excepto a /admin/repartidor
-            if (
-              window.location.pathname === "/admin/repartidor" ||
-              window.location.pathname === "/admin/cocinero" ||
-              window.location.pathname === "/admin/mesero" ||
-              window.location.pathname === "/"
-            ) {
-              navigate("/admin"); // Redirigir a la raíz si intenta acceder a /admin/repartidor
-            } else {
-              setRedirected(true); // Permitir acceso a otras rutas
-            }
-            break;
-          case "repartidor":
-            if (pedidoEnCurso?.numero_pedido) {
-              // Si hay un pedido en curso, redirigir a la página del pedido
-              navigate(
-                `/admin/repartidor/pedido/${pedidoEnCurso.numero_pedido}`
-              );
-            } else {
-              // Si no hay pedido en curso, redirigir a la página de repartidor
-              navigate("/admin/repartidor");
-            }
-            setRedirected(true);
-            break;
-          default:
-            navigate("/"); // En caso de que el rol no sea reconocido
-            break;
+        break;
+      case "repartidor":
+        if (pedidoEnCurso?.numero_pedido) {
+          navigate(`/admin/repartidor/pedido/${pedidoEnCurso.numero_pedido}`);
+        } else {
+          navigate("/admin/repartidor");
         }
-      }
+        setRedirected(true);
+        break;
+      default:
+        navigate("/");
+        break;
     }
   }, [userActual, navigate, redirected, pedidoEnCurso]);
 

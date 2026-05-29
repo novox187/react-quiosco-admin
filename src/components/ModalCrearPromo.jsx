@@ -13,33 +13,28 @@ export default function ModalCrearPromo() {
     const nombrePromoRef = createRef();
     const porcientoPromoRef = createRef();
 
-    //Subir datos 
-    const handleSubmitNuevaPromo = async e => {
+    // v1: POST /promociones {nombre, descuento (0-100), descripcion?, fecha_inicio?, fecha_fin?, activa?}
+    const handleSubmitNuevaPromo = async (e) => {
         e.preventDefault();
-        setLoading(true)
+        setLoading(true);
         const datosNuevaPromo = {
-            nombre_promo: formatearTextoDB(nombrePromoRef.current.value),
-            porciento_promo: formatearTextoDB(porcientoPromoRef.current.value),
-        }
+            nombre: formatearTextoDB(nombrePromoRef.current.value),
+            descuento: Number(formatearTextoDB(porcientoPromoRef.current.value)),
+            activa: true,
+        };
 
-        const token = localStorage.getItem('AUTH_TOKEN');
         try {
-            const { data } = await clienteAxios.post('/api/promocion/create', datosNuevaPromo, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                },
-            })
+            const { data } = await clienteAxios.post('/promociones', datosNuevaPromo);
             setErrorPromo([]);
-            toast.success('Promocion añadida Correctamente');
+            toast.success('Promoción añadida correctamente');
             setModalCrearPromo(!modalCrearPromo);
-            setLoading(false)
-            socketConnection.emit("onRegistro", data.registro);
+            setLoading(false);
+            socketConnection?.emit("onPromocion", data);
         } catch (error) {
-            setErrorPromo(Object.values(error.response.data.errors))
-            setLoading(false)
+            setErrorPromo(Object.values(error.response?.data?.errors ?? {}));
+            setLoading(false);
         }
-
-    }
+    };
 
 
     return (

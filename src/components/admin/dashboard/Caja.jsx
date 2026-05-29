@@ -12,16 +12,15 @@ export default function Caja() {
     const { setModalAbrirCaja, setModalCerrarCaja, setDatosCaja, datosCaja } = useAdmin();
     const [colorBoton, setColorBoton] = useState('danger');
 
-    const token = localStorage.getItem("AUTH_TOKEN");
+    // v1: GET /caja/cajas — devuelve lista; usamos la primera con apertura activa si existe.
     const obtenerDatosCaja = async () => {
         try {
-            const { data } = await clienteAxios("/api/caja", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data'
-                },
+            const { data } = await clienteAxios.get('/caja/cajas');
+            const cajaConApertura = data.find((c) => c.aperturas?.length > 0) ?? data[0];
+            setDatosCaja({
+                caja: cajaConApertura,
+                apertura: cajaConApertura?.aperturas?.[0] ?? null,
             });
-            setDatosCaja(data);
         } catch (error) {
             console.error(error);
         }

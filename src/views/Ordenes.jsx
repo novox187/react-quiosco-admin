@@ -12,22 +12,20 @@ export default function Ordenes() {
 
   const { handleClickCompletarPedido, pedidosQuery, setPedidosQuery, modalEliminarOrden, setModalEliminarOrden, setOrdenEliminar, loadingCompletarPedido, token } = useAdmin();
 
-  const pedidosIncompletos = pedidosQuery?.pedidos.filter(pedido => pedido.estado === 1 || pedido.lugar === 'envio');
+  // v1: estado enum string; incompleto = no terminal.
+  const pedidosIncompletos = pedidosQuery?.pedidos.filter(
+    (p) => p.estado === 'recibido' || p.estado === 'en_preparacion' || p.tipo_servicio === 'delivery'
+  );
 
-  //Optener pedidos 
+  // v1: GET /pedidos?activos=true devuelve paginado {data: [...]}.
   const obtenerPedidos = async () => {
     if (!pedidosQuery) {
       try {
-        const { data } = await clienteAxios(`/api/pedidos/admin`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data'
-          },
-        });
-        setPedidosQuery(data);
+        const { data } = await clienteAxios.get('/pedidos?activos=true&por_pagina=100');
+        // Normaliza al shape legacy {pedidos: [...]} que el resto del componente espera.
+        setPedidosQuery({ pedidos: data.data ?? data });
       } catch (error) {
-        console.error(error)
-        console.error('inicia session')
+        console.error(error);
       }
     }
   };

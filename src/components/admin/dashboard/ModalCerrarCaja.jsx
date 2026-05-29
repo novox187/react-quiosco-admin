@@ -19,33 +19,29 @@ export default function ModalCerrarCaja() {
         setConfirmacion(e.target.value)
     }
 
+    // v1: POST /caja/aperturas/{id}/cerrar {fondo_final_real, observaciones?}
+    // Aquí `idCajaCerrar` debe ser el id de la *apertura* activa (no de la caja).
+    // Si el componente todavía pasa id_caja, busca primero la apertura activa.
     const handleCerrarCaja = async () => {
-        setLoginCerrarCaja(true)
-
-        const datosCaja = {
-            id_caja: idCajaCerrar,
+        setLoginCerrarCaja(true);
+        try {
+            const fondoFinal = Number(confirmacion);
+            const { data } = await clienteAxios.post(
+                `/caja/aperturas/${idCajaCerrar}/cerrar`,
+                {
+                    fondo_final_real: isFinite(fondoFinal) ? fondoFinal : 0,
+                    observaciones: 'Cierre desde admin',
+                }
+            );
+            setLoginCerrarCaja(false);
+            setModalCerrarCaja(false);
+            socketConnection?.emit("onCaja", data);
+            toast.warning('Cerraste la caja');
+        } catch (error) {
+            toast.error(error.response?.data?.message ?? 'Error al cerrar caja');
+            setLoginCerrarCaja(false);
         }
-
-        const token = localStorage.getItem('AUTH_TOKEN');
-        if (localStorage.getItem('USER')) {
-            try {
-                const { data } = await clienteAxios.post('/api/caja/cerrar', datosCaja, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'multipart/form-data'
-                    },
-                })
-                setLoginCerrarCaja(false)
-                setModalCerrarCaja(false)
-                socketConnection.emit("onCaja", data,)
-                socketConnection.emit("onRegistro", data)
-                toast.warning('Cerraste la caja, los usuarios no podran hacer nuevos pedidos')
-            } catch (error) {
-                toast.error(error.response.data.errors.pedidos[0])
-                setLoginCerrarCaja(false)
-            }
-        }
-    }
+    };
 
 
     return (

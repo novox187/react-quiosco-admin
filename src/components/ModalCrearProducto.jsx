@@ -53,19 +53,13 @@ export default function ModalCrearProducto() {
     };
 
 
+    // v1: GET /contenedores-opcion devuelve array con sus opciones eagerloaded.
     const obtenerContenedores = async () => {
-        if (localStorage.getItem('USER')) {
-            const token = localStorage.getItem("AUTH_TOKEN");
-            try {
-                const { data } = await clienteAxios("/api/contenedores", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                setContenedoresQuery(data)
-            } catch (error) {
-                console.log(error)
-            }
+        try {
+            const { data } = await clienteAxios.get('/contenedores-opcion');
+            setContenedoresQuery(data);
+        } catch (error) {
+            console.log(error);
         }
     };
     useEffect(() => {

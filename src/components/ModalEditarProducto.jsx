@@ -32,22 +32,16 @@ export default function ModalEditarProducto() {
 
 
 
-    //OBTENER TODAS LAS PROMOCIONES
+    // v1: GET /promociones devuelve array plano (sin envelope `data`).
     const obtenerPromociones = async () => {
         try {
-            const { data } = await clienteAxios("/api/promociones", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                }
-            });
-            //guardamos los datos traidos desde la base de datos
-            let datos = data?.data;
-            //agregamos la opcion de dejar sin promocion el producto
-            datos.push({ id: "", nombre: 'sin promocion' })
-            //guardamos los datos en el estado de promociones
+            const { data } = await clienteAxios.get('/promociones');
+            const datos = Array.isArray(data) ? [...data] : [];
+            datos.push({ id: "", nombre: 'sin promocion' });
             setPromociones(datos);
-            //filtramos la promocion actual que tiene el producto
-            let promocionDelrpducto = data?.data?.find(promocion => promocion?.id === productoEditar?.promo_id)
+            // v1 usa `promocion_id` en lugar de `promo_id`.
+            const promoId = productoEditar?.promocion_id ?? productoEditar?.promo_id;
+            let promocionDelrpducto = datos.find((p) => p?.id === promoId);
             //en caso de que no tenga promocion le asignamos el nombre sin promocion
             if (!promocionDelrpducto) {
                 promocionDelrpducto = {

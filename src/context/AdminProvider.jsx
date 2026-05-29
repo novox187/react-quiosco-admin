@@ -433,86 +433,83 @@ const AdminProvider = ({ children }) => {
         setModalEliminarCategoria(!modalEliminarCategoria)
     }
 
-    /* Eliminar Orden */
+    /*
+     * Calificación + eliminar orden (legacy unía dos cosas).
+     * v1 separa: PATCH /pedidos/{id}/cancelar para anular el pedido.
+     * La calificación de usuario aún no tiene endpoint en v1 — pendiente backend.
+     */
     const handleSubmitCalificacion = async (datosCalificacion) => {
-        setErrorCalificacion([])
-        setLoadingEliminarOrden(true)
+        setErrorCalificacion([]);
+        setLoadingEliminarOrden(true);
         try {
-            const { data } = await clienteAxios.put(`/api/usuarios/${datosCalificacion.id_user}`, datosCalificacion, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
+            const pedidoId = datosCalificacion.pedido_id ?? datosCalificacion.id;
+            if (pedidoId) {
+                await clienteAxios.patch(`/pedidos/${pedidoId}/cancelar`, {
+                    motivo: datosCalificacion.motivo ?? 'Eliminado por admin',
+                });
+            }
+            // TODO: calificación del usuario — esperando endpoint v1 dedicado.
             setErrorCalificacion([]);
-            toast.success('Se ha eliminado el pedido Correctamente');
+            toast.success('Pedido cancelado correctamente');
             setModalEliminarOrden(!modalEliminarOrden);
-            socketConnection.emit("onEliminarPedido", data.data)
-            socketConnection.emit("onRegistro", data.registro)
-            setLoadingEliminarOrden(false)
+            socketConnection?.emit("onEliminarPedido", { id: pedidoId });
+            setLoadingEliminarOrden(false);
         } catch (error) {
-            setErrorCalificacion(Object.values(error.response.data.errors))
-            setLoadingEliminarOrden(false)
+            setErrorCalificacion(Object.values(error.response?.data?.errors ?? {}));
+            setLoadingEliminarOrden(false);
         }
-
-    }
+    };
 
     /* COMPLETAR PEDIDO */
+    /*
+     * Avanzar pedido — v1 cambió la semántica:
+     *   legacy: PUT /pedidos/actualizar/{id} con `identificador: 0|1|2`
+     *   v1:     PATCH /pedidos/{id}/estado con `estado: "en_preparacion"|"listo"|"entregado"`
+     * Y el cobro (`dineroCliente, pago`) ahora es un endpoint aparte:
+     *   POST /pedidos/{id}/pagos {metodo_pago_id, monto}
+     */
     const handleClickCompletarPedido = async (id, variable, dineroCliente, pago) => {
-        if (variable === 0) {
-            setLoadingConfirmarPedido(id);
-        }
-        if (variable === 1) {
-            setLoadingCompletarPedido(id);
-        }
-        if (variable === 2) {
-            setLoadingEntregarPedido(id);
-        }
-        if (localStorage.getItem('USER')) {
-            try {
-                const { data } = await clienteAxios.put(
-                    `/api/pedidos/actualizar/${id}`,
-                    {
-                        identificador: variable,
-                        dineroCliente: dineroCliente,
-                        pago: pago
-                    },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                );
+        const estadoPorVariable = { 0: 'en_preparacion', 1: 'listo', 2: 'entregado' };
+        const nuevoEstado = estadoPorVariable[variable];
 
-                socketConnection.emit("onPedido", data)
-                socketConnection.emit("onRegistro", data.registro)
+        if (variable === 0) setLoadingConfirmarPedido(id);
+        if (variable === 1) setLoadingCompletarPedido(id);
+        if (variable === 2) setLoadingEntregarPedido(id);
 
-                if (variable === 0) {
-                    toast.success("El pedido esta en proceso");
-                    setLoadingConfirmarPedido(false);
-                    setLoadingConfirmarPedidoModal(false)
-                    setModalConfirmarPedido(false)
-                    setPrecioPedido({})
-                }
-                if (variable === 1) {
-                    toast.success("pedido Preparada");
-                    setLoadingCompletarPedido(false);
-                }
-                if (variable === 2) {
-                    toast.success("pedido Entregada");
-                    setLoadingEntregarPedido(false);
-                }
-            } catch (error) {
-                console.error(error);
-                if (variable === 0) {
-                    setLoadingConfirmarPedido(false);
-                }
-                if (variable === 1) {
-                    setLoadingCompletarPedido(false);
-                }
-                if (variable === 2) {
-                    setLoadingEntregarPedido(false);
+        try {
+            // Avance de estado
+            const { data } = await clienteAxios.patch(`/pedidos/${id}/estado`, { estado: nuevoEstado });
+            socketConnection?.emit("onPedido", data);
+
+            // Cobro: se registra al confirmar (variable === 0) si llegan los datos.
+            if (variable === 0 && dineroCliente && pago) {
+                try {
+                    // pago: nombre del método (legacy). Resolvemos el id de metodos_pago.
+                    const metodos = await clienteAxios.get('/caja/cajas'); // TODO: endpoint dedicado /metodos-pago
+                    // Por ahora asumimos id=1 (efectivo) si no podemos resolver.
+                    await clienteAxios.post(`/pedidos/${id}/pagos`, {
+                        metodo_pago_id: 1,
+                        monto: Number(data.total ?? dineroCliente),
+                    });
+                } catch (e) {
+                    console.warn('Pago no registrado en v1:', e.message);
                 }
             }
+
+            if (variable === 0) {
+                toast.success("El pedido está en proceso");
+                setLoadingConfirmarPedido(false);
+                setLoadingConfirmarPedidoModal(false);
+                setModalConfirmarPedido(false);
+                setPrecioPedido({});
+            }
+            if (variable === 1) { toast.success("Pedido listo"); setLoadingCompletarPedido(false); }
+            if (variable === 2) { toast.success("Pedido entregado"); setLoadingEntregarPedido(false); }
+        } catch (error) {
+            console.error(error);
+            if (variable === 0) setLoadingConfirmarPedido(false);
+            if (variable === 1) setLoadingCompletarPedido(false);
+            if (variable === 2) setLoadingEntregarPedido(false);
         }
     };
 
@@ -564,28 +561,32 @@ const AdminProvider = ({ children }) => {
         setLoadingNuevaOrden(true)
         if (localStorage.getItem('USER')) {
             try {
-                const { data } = await clienteAxios.post(
-                    "/api/pedidos/nuevo",
-                    {
-                        totalNeto,
-                        total,
-                        lugar: lugarMesero,
-                        mesa: mesaMesero,
-                        productos: pedidoMesero.map((producto) => {
-                            return {
-                                id: producto.id,
-                                detalle_Producto: producto.detallesProducto,
-                                total_opciones: producto.totalOpciones
-                            };
-                        }),
-                    },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                );
-                toast.success(data.message);
+                /*
+                 * v1 cambió el shape de crear pedido:
+                 *   POST /pedidos {tipo_servicio, mesa, items: [{producto_id, cantidad, opciones: [{opcion_id, cantidad}]}]}
+                 * El total se calcula en el backend (snapshot de precios).
+                 * El campo `lugar` legacy ("local"|"envio") se mapea a `tipo_servicio` ("local"|"delivery").
+                 */
+                const tipoServicio = lugarMesero === 'envio'
+                    ? 'delivery'
+                    : (mesaMesero ? 'en_mesa' : 'local');
+
+                const { data } = await clienteAxios.post("/pedidos", {
+                    tipo_servicio: tipoServicio,
+                    mesa: mesaMesero ?? null,
+                    items: pedidoMesero.map((producto) => ({
+                        producto_id: producto.id,
+                        cantidad: producto.cantidad ?? 1,
+                        notas: producto.notas ?? null,
+                        opciones: (producto.detallesProducto ?? [])
+                            .filter((d) => d.opcion_id)
+                            .map((d) => ({
+                                opcion_id: d.opcion_id,
+                                cantidad: d.cantidad ?? 1,
+                            })),
+                    })),
+                });
+                toast.success(`Pedido ${data.numero_pedido} creado`);
                 setTimeout(() => {
                     setPedidoMesero([]);
                 }, 1000);
@@ -608,11 +609,12 @@ const AdminProvider = ({ children }) => {
 
 
 
-    /* Obtener productos desde el backend */
+    /* Obtener productos desde el backend (v1: paginado en {data: [...]}) */
     const obtenerProductos = async () => {
         try {
-            const { data } = await clienteAxios("/api/productos");
-            setProductoQuery(data);
+            const { data } = await clienteAxios.get("/productos?por_pagina=200&incluir_ocultos=true");
+            // v1 devuelve { data, links, meta, ... } por paginación.
+            setProductoQuery(data.data ?? data);
         } catch (error) {
             console.error(error);
         }
@@ -621,21 +623,14 @@ const AdminProvider = ({ children }) => {
         obtenerProductos();
     }, []);
 
-    /* Obtener categorias */
+    /* Obtener categorías con productos anidados (v1: GET /categorias?con_productos=true) */
     const obtenerCategoriasProductos = async () => {
-
-        const token = localStorage.getItem("AUTH_TOKEN");
-        if (localStorage.getItem('USER')) {
-            try {
-                const { data } = await clienteAxios("/api/categorias/productos", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                setCategoriasProductos(data.data);
-            } catch (error) {
-                console.log(error)
-            }
+        if (!localStorage.getItem('AUTH_TOKEN')) return;
+        try {
+            const { data } = await clienteAxios.get("/categorias?con_productos=true");
+            setCategoriasProductos(data);
+        } catch (error) {
+            console.log(error);
         }
     };
 
@@ -645,123 +640,94 @@ const AdminProvider = ({ children }) => {
 
 
     /* PRODUCTO */
-    /* Funcion Crear producto */
+    /* Crear producto — v1: POST /productos (multipart) devuelve el modelo */
     const crearProducto = async (datosProductoNuevo) => {
-        const token = localStorage.getItem('AUTH_TOKEN');
-        if (localStorage.getItem('USER')) {
-            try {
-                const { data } = await clienteAxios.post('/api/productos/create', datosProductoNuevo, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'multipart/form-data'
-                    },
-                })
-                setErrores([])
-                toast.success('Producto añadido Correctamente')
-                setModalCrearProducto(false)
-                setLoadingCrearProducto(false)
-                socketConnection.emit("onCrearProducto", data);
-                socketConnection.emit("onRegistro", data.registro);
-            } catch (error) {
-                console.error(error)
-                setErrores(Object.values(error.response.data.errors))
-                setLoadingCrearProducto(false)
-            }
-        }
-    }
-
-    /* Editar producto */
-    const handleClickEditarProducto = async (data) => {
         try {
-            const res = await clienteAxios.post(`/api/productos/actualizar/${data.id}`, data, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data'
-                },
+            const { data } = await clienteAxios.post('/productos', datosProductoNuevo, {
+                headers: { 'Content-Type': 'multipart/form-data' },
             });
-            setLoadingIsEdit(false)
-            toast.success(` producto con el id:${data.id} editado`);
-            setErrorEdicionProducto([])
-            setModalEditarProducto(!modalEditarProducto)
-            socketConnection.emit("onActualizarProductos", res.data.producto);
-            socketConnection.emit("onRegistro", res.data.registro);
+            setErrores([]);
+            toast.success('Producto añadido correctamente');
+            setModalCrearProducto(false);
+            setLoadingCrearProducto(false);
+            socketConnection?.emit("onCrearProducto", data);
         } catch (error) {
-            setErrorEdicionProducto(Object.values(error.response.data.errors))
+            console.error(error);
+            setErrores(Object.values(error.response?.data?.errors ?? {}));
+            setLoadingCrearProducto(false);
         }
     };
 
-    /* CAMBIAR ESTADO DEL PRODUCTO (agotado o disponible) */
+    /* Editar producto — v1: POST /productos/{id} (multipart, _method=PUT no requerido) */
+    const handleClickEditarProducto = async (data) => {
+        try {
+            const res = await clienteAxios.post(`/productos/${data.id}`, data, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+            setLoadingIsEdit(false);
+            toast.success(`Producto ${res.data.id} editado`);
+            setErrorEdicionProducto([]);
+            setModalEditarProducto(!modalEditarProducto);
+            socketConnection?.emit("onActualizarProductos", res.data);
+        } catch (error) {
+            setErrorEdicionProducto(Object.values(error.response?.data?.errors ?? {}));
+        }
+    };
+
+    /* Toggle disponibilidad — v1: PATCH /productos/{id}/disponibilidad {disponible: enum} */
     const handleClickProductoAgotado = async (id, disponibilidad) => {
         try {
-            const { data } = await clienteAxios.put(`/api/productos/disponible/${id}`, null, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            socketConnection.emit("onDisponible", data);
-            socketConnection.emit("onRegistro", data.registro);
-            if (disponibilidad == "1") {
-                toast.success("Producto desabilitado");
-            } else {
-                toast.success("Producto Reinsertado");
-            }
-
-            setLoadingDisponible()
+            // El admin usa "1"/"0" como agotado/disponible; v1 acepta los strings de enum.
+            const nuevo = disponibilidad == "1" ? "agotado" : "disponible";
+            const { data } = await clienteAxios.patch(`/productos/${id}/disponibilidad`, { disponible: nuevo });
+            socketConnection?.emit("onDisponible", data);
+            toast.success(nuevo === "agotado" ? "Producto deshabilitado" : "Producto reinsertado");
+            setLoadingDisponible();
         } catch (error) {
-            setLoadingDisponible()
+            setLoadingDisponible();
             console.error(error);
         }
     };
 
+    /* Eliminar producto — v1: DELETE /productos/{id} (soft-delete) */
     const eliminarProducto = async (id) => {
-        if (localStorage.getItem('USER')) {
-            try {
-                const { data } = await clienteAxios.put(`/api/productos/eliminar/${id}`, null, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                })
-                setModalEliminarProducto(false);
-                toast.success(data.message)
-                socketConnection.emit("onEliminarProductos", data);
-                socketConnection.emit("onRegistro", data.registro);
-                setLoginEliminarProducto(false)
-            } catch (error) {
-                console.log(error)
-                setLoginEliminarProducto(false)
-            }
+        try {
+            const { data } = await clienteAxios.delete(`/productos/${id}`);
+            setModalEliminarProducto(false);
+            toast.success(data.mensaje ?? 'Producto eliminado');
+            socketConnection?.emit("onEliminarProductos", { id });
+            setLoginEliminarProducto(false);
+        } catch (error) {
+            console.log(error);
+            setLoginEliminarProducto(false);
         }
-    }
+    };
 
+    /* Mover producto entre categorías — v1: PATCH /productos/{id}/mover {categoria_id} */
     const moverProducto = async (datos, id) => {
-        const token = localStorage.getItem("AUTH_TOKEN");
-        if (localStorage.getItem('USER')) {
-            try {
-                const { data } = await clienteAxios.put(`/api/productos/mover/${id}`, datos, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                })
-                toast.success(data.message)
-                setModalMoverProducto(!modalMoverProducto)
-                socketConnection.emit("onMoverProducto", data);
-                socketConnection.emit("onRegistro", data.registro);
-                setLoadingMoverProducto(false)
-            } catch (error) {
-                console.error(error)
-                setLoadingMoverProducto(false)
-            }
+        try {
+            // admin legacy enviaba {categoriaAnterior, categoriaActual, productoId};
+            // v1 sólo necesita categoria_id (nueva).
+            const body = { categoria_id: datos.categoriaActual ?? datos.categoria_id };
+            const { data } = await clienteAxios.patch(`/productos/${id}/mover`, body);
+            toast.success('Producto movido');
+            setModalMoverProducto(!modalMoverProducto);
+            socketConnection?.emit("onMoverProducto", data);
+            setLoadingMoverProducto(false);
+        } catch (error) {
+            console.error(error);
+            setLoadingMoverProducto(false);
         }
-    }
+    };
 
     /* CATEGORIAS */
-    /* Obtener categorias desde el backend */
+    /* Obtener categorías — v1: GET /categorias devuelve un array plano (sin envelope) */
     const obtenerCategorias = async () => {
         try {
-            const { data } = await clienteAxios("/api/categorias");
-            setCategorias(data.data);
+            const { data } = await clienteAxios.get("/categorias");
+            setCategorias(data);
         } catch (error) {
-            console.error(error)
+            console.error(error);
         }
     };
 
@@ -769,126 +735,102 @@ const AdminProvider = ({ children }) => {
         obtenerCategorias();
     }, []);
 
-    /* Funcion Crear Categoria */
+    /* Crear categoría — v1: POST /categorias (multipart con `icono` opcional) */
     const crearCategoria = async (datosIconoNuevo) => {
-        setErroresCrearCategoria([])
-        const token = localStorage.getItem('AUTH_TOKEN');
-        if (localStorage.getItem('USER')) {
-            try {
-                const { data } = await clienteAxios.post('/api/categorias/create', datosIconoNuevo, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'multipart/form-data'
-                    },
-                })
-                setErrores([])
-                toast.success('Categoria añadida Correctamente')
-                handleClickModalCategoria()
-                setLoadingCrearCategoria(false)
-                socketConnection.emit("onCrearCategoria", data.data);
-                socketConnection.emit("onRegistro", data.registro);
-            } catch (error) {
-                console.error(error)
-                setLoadingCrearCategoria(false)
-                setErroresCrearCategoria(Object.values(error.response.data.errors))
-            }
-        }
-    }
-
-    /* Funcion eliminar categoria */
-    const eliminarCategoria = async (id) => {
-        if (localStorage.getItem('USER')) {
-            try {
-                const { data } = await clienteAxios.delete(`/api/categorias/eliminar/${id}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                })
-                toast.success(data.menssage)
-                setModalEliminarCategoria(false)
-                socketConnection.emit("onEliminarCategoria", id);
-                socketConnection.emit("onRegistro", data.registro);
-                setLoginEliminarCategoria(false)
-            } catch (error) {
-                console.error(error)
-                setLoginEliminarCategoria(false)
-            }
-        }
-    }
-
-    const editarCategoria = async (datosIconoNuevo, id) => {
-        if (localStorage.getItem('USER')) {
-            try {
-                const { data } = await clienteAxios.post(`/api/categorias/update/${id}`, datosIconoNuevo, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'multipart/form-data'
-                    },
-                });
-                toast.success(data.menssage)
-                setErrorEditarCategoria([])
-                setLoadingEditarCategoria(false)
-                setModalEditarCategoria(false)
-                socketConnection.emit("onEditarCategoria", data);
-                socketConnection.emit("onRegistro", data.registro);
-            } catch (error) {
-                setErrorEditarCategoria(Object.values(error.response.data.errors))
-                setLoadingEditarCategoria(false)
-            }
-        }
-    }
-
-    const handleClickAbrirCaja = async () => {
-        setLoadingAbrirCaja(true)
-        const datosCaja = {
-            dinero_abrir: dinero.target.value,
-        }
-        const token = localStorage.getItem('AUTH_TOKEN');
-        if (localStorage.getItem('USER')) {
-            try {
-                const { data } = await clienteAxios.post('/api/caja/abrir', datosCaja, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'multipart/form-data'
-                    },
-                })
-                setLoadingAbrirCaja(false)
-                setModalAbrirCaja(false)
-                socketConnection.emit("onCaja", data)
-                socketConnection.emit("onRegistro", data.registro)
-                toast.success('Acabas de abrir la caja, los usuarios podran hacer nuevos pedidos')
-            } catch (error) {
-                console.error(error)
-                setLoadingAbrirCaja(false)
-            }
-        }
-    }
-
-
-    const asignarPedido = async (pedidoId) => {
-        const token = localStorage.getItem("AUTH_TOKEN");
+        setErroresCrearCategoria([]);
         try {
-            const { data } = await clienteAxios.post(`/api/pedidos/repartidor/asignar/${pedidoId}`, {}, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data'
-                },
+            const { data } = await clienteAxios.post('/categorias', datosIconoNuevo, {
+                headers: { 'Content-Type': 'multipart/form-data' },
             });
-            setPedidoEnCurso(data.data);
-            Cookies.set("pedidoEnCurso", JSON.stringify(data.data), { expires: 2 });
+            setErrores([]);
+            toast.success('Categoría añadida correctamente');
+            handleClickModalCategoria();
+            setLoadingCrearCategoria(false);
+            socketConnection?.emit("onCrearCategoria", data);
+        } catch (error) {
+            console.error(error);
+            setLoadingCrearCategoria(false);
+            setErroresCrearCategoria(Object.values(error.response?.data?.errors ?? {}));
+        }
+    };
+
+    /* Eliminar categoría — v1: DELETE /categorias/{id} */
+    const eliminarCategoria = async (id) => {
+        try {
+            const { data } = await clienteAxios.delete(`/categorias/${id}`);
+            toast.success(data.mensaje ?? 'Categoría eliminada');
+            setModalEliminarCategoria(false);
+            socketConnection?.emit("onEliminarCategoria", id);
+            setLoginEliminarCategoria(false);
+        } catch (error) {
+            console.error(error);
+            setLoginEliminarCategoria(false);
+        }
+    };
+
+    /* Editar categoría — v1: POST /categorias/{id} (multipart) */
+    const editarCategoria = async (datosIconoNuevo, id) => {
+        try {
+            const { data } = await clienteAxios.post(`/categorias/${id}`, datosIconoNuevo, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+            toast.success('Categoría actualizada');
+            setErrorEditarCategoria([]);
+            setLoadingEditarCategoria(false);
+            setModalEditarCategoria(false);
+            socketConnection?.emit("onEditarCategoria", data);
+        } catch (error) {
+            setErrorEditarCategoria(Object.values(error.response?.data?.errors ?? {}));
+            setLoadingEditarCategoria(false);
+        }
+    };
+
+    /* Abrir caja — v1: POST /caja/cajas/{id}/abrir {fondo_inicial} */
+    const handleClickAbrirCaja = async () => {
+        setLoadingAbrirCaja(true);
+        try {
+            // En v1 abrimos una caja específica; obtenemos la primera disponible.
+            const cajas = await clienteAxios.get('/caja/cajas');
+            const cajaId = cajas.data[0]?.id;
+            if (!cajaId) throw new Error('No hay cajas configuradas');
+
+            const { data } = await clienteAxios.post(`/caja/cajas/${cajaId}/abrir`, {
+                fondo_inicial: Number(dinero.target.value),
+            });
+            setLoadingAbrirCaja(false);
+            setModalAbrirCaja(false);
+            socketConnection?.emit("onCaja", data);
+            toast.success('Caja abierta — ya se pueden tomar pedidos');
+        } catch (error) {
+            console.error(error);
+            setLoadingAbrirCaja(false);
+            toast.error(error.response?.data?.message ?? 'Error al abrir caja');
+        }
+    };
+
+
+    /*
+     * DELIVERY (v1): el flujo legacy asignaba al repartidor en una sola llamada.
+     * En v1 se requiere `repartidor_id` explícito (el usuario auth) y el endpoint
+     * vive en /delivery. Aquí asumimos que el repartidor se auto-asigna su pedido.
+     */
+    const asignarPedido = async (pedidoId) => {
+        try {
+            const me = await clienteAxios.get('/auth/me');
+            const { data } = await clienteAxios.post(`/delivery/pedidos/${pedidoId}/asignar`, {
+                repartidor_id: me.data.id,
+            });
+            setPedidoEnCurso(data);
+            Cookies.set("pedidoEnCurso", JSON.stringify(data), { expires: 2 });
         } catch (error) {
             console.error(error);
         }
     };
 
+    /* Cancelar entrega — v1: PATCH /delivery/asignaciones/{id}/cancelar */
     const cancelarPedido = async (id) => {
         try {
-            const { data } = await clienteAxios.patch(`/api/pedidos/repartidor/cancelar/${id}`, {}, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data'
-                },
-            });
+            await clienteAxios.patch(`/delivery/asignaciones/${id}/cancelar`, {});
             setPedidoEnCurso(null);
             Cookies.remove('pedidoEnCurso');
             window.location.reload();
@@ -898,15 +840,11 @@ const AdminProvider = ({ children }) => {
             setLoadingCancelarPedido(false);
         }
     };
-    
+
+    /* Finalizar entrega — v1: PATCH /delivery/asignaciones/{id}/finalizar */
     const finalizarPedido = async (id) => {
         try {
-            const { data } = await clienteAxios.patch(`/api/pedidos/repartidor/finalizar/${id}`, {}, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data'
-                },
-            });
+            await clienteAxios.patch(`/delivery/asignaciones/${id}/finalizar`, {});
             setPedidoEnCurso(null);
             Cookies.remove('pedidoEnCurso');
             window.location.reload();

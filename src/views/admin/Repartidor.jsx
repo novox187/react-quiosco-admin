@@ -9,17 +9,14 @@ export default function Repartidor() {
   const token = localStorage.getItem("AUTH_TOKEN");
   const [pedidos, setPedidos] = useState([]);
 
+  // v1: GET /delivery/asignaciones/mias — devuelve asignaciones activas con pedido y dirección.
   const obtenerPedidosRepartidor = async () => {
     try {
-      const { data } = await clienteAxios('/api/pedidos/repartidor', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data'
-        },
-      });
-      setPedidos(data.data);
+      const { data } = await clienteAxios.get('/delivery/asignaciones/mias');
+      // Normalizamos al shape legacy: cada item expone .pedido como antes.
+      setPedidos(data);
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   };
 
